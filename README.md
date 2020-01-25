@@ -8,7 +8,7 @@
 
 ## Communication Tool: *Discord.org*
 
-## Team Roles:
-	1. _**Yonathan Zuniga**_
-		1. *Team Manager* :bacon:
-		2. *Co-Programming Lead* :trollface:
+## Team Roles
+1. _**Yonathan Zuniga**_
+	1. *Team Manager* :bacon:
+	2. *Co-Programming Lead* :trollface:
