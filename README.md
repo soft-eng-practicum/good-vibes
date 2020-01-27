@@ -15,3 +15,6 @@
 2. _**Jesse Merida**_
 	1. *UI/UX Design* :sushi:
 	2. *Data Modeler* :video_game:
+3. _**Fahim Choudhury**_
+	1. *Client liaison* :rabbit:
+	2. *Testing lead* :skull:
