@@ -19,5 +19,8 @@
 	1. *Client liaison* :rabbit:
 	2. *Testing lead* :skull:
 4. _**Jerson Espinosa**_
-	1. *Documentation* :hear_no_evil:
-	2. *Co-Programming Lead* :speak_no_evil:
+	1. *Team Manager* :hear_no_evil:
+	2. *Co-Programming Lead* :see_no_evil:
+	
+
+
