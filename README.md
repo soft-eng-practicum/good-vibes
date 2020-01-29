@@ -20,8 +20,8 @@
 	2. *Testing lead* :skull:
 	
 4. _**Jerson Espinosa**_
-	1. *Team Manager* :hear_no_evil:
+	1. *Documentation Lead* :hear_no_evil:
 	2. *Co-Programming Lead* :see_no_evil:
 	
 
-
+https://cdn.discordapp.com/attachments/664843822668447754/671874986083876884/images.png
