@@ -23,5 +23,5 @@
 	1. *Documentation Lead* :hear_no_evil:
 	2. *Co-Programming Lead* :see_no_evil:
 	
-
-https://cdn.discordapp.com/attachments/664843822668447754/671874986083876884/images.png
+Inline-style: 
+![alt text](https://cdn.discordapp.com/attachments/664843822668447754/671874986083876884/images.png "Logo Title Text 1")
