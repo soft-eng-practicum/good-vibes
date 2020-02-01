@@ -4,9 +4,9 @@
 
 ## Repo link: *https://github.com/soft-eng-practicum/good-vibes*
 
-## Progress Tracking Tool: *TBA*
+## Progress Tracking Tool: *https://zenhub.com*
 
-## Communication Tool: *Discord.org*
+## Communication Tool: *https://discordapp.com/*
 
 ## Team Roles
 1. _**Yonathan Zuniga**_
