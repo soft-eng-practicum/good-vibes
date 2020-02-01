@@ -2,7 +2,9 @@
 
 ## Project Name: *Good Vibes*
 
-## Repo link: *https://github.com/soft-eng-practicum/good-vibes*
+## Repo Link: *https://github.com/soft-eng-practicum/good-vibes*
+
+## Platform Tool: Unity 2019.3.0 (Jan 27 release)
 
 ## Progress Tracking Tool: *https://zenhub.com*
 
