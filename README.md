@@ -4,7 +4,7 @@
 
 ## Repo Link: *https://github.com/soft-eng-practicum/good-vibes*
 
-## Platform Tool: Unity 2019.3.0 (Jan 27 release)
+## Platform Tool: Unity 2018.4.16f1 (Jan 27 release)
 
 ## Progress Tracking Tool: *https://zenhub.com*
 
