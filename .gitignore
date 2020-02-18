@@ -37,3 +37,7 @@ sysinfo.txt
 
 # include meta files
 !.*.meta
+
+# Library extras
+*.dwlt
+*.log
