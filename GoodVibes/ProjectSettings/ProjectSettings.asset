@@ -602,6 +602,8 @@ PlayerSettings:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
+    Build: 1
+    Collab: 1
     UNet: 1
   luminIcon:
     m_Name: 
@@ -622,10 +624,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 6171bff1-6fe5-45a2-847b-d07704ab3034
+  cloudProjectId: b28f5109-91c5-417f-9c0b-28ec90c3d17f
   framebufferDepthMemorylessMode: 0
-  projectName: GoodVibes
-  organizationId: obelixe
+  projectName: Good Vibes
+  organizationId: goodvibesinc
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

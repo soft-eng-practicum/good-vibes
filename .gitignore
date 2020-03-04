@@ -41,3 +41,6 @@ sysinfo.txt
 # Library extras
 *.dwlt
 *.log
+
+# Other
+*.collabignore
