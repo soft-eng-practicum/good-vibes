@@ -19,7 +19,6 @@ public class PlayerController : NetworkBehaviour
     {
         netMan = GameObject.Find("NetMan").GetComponent<NetworkManager>();
         db = netMan.GetComponent<PostDB>();
-
     }
 
     public override void OnStartLocalPlayer()
