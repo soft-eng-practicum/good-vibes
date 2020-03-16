@@ -6,14 +6,17 @@ using UnityEngine.Networking;
 public class Player : NetworkBehaviour
 {
     NetworkManager netMan;
+    string data = "dab";
 
     public override void OnStartServer()
     {
-        netMan = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
+        netMan = GameObject.Find("DefaultNetworkManager").GetComponent<NetworkManager>();
     }
 
     public override void OnStartLocalPlayer()
     {
         Debug.Log("Player.cs - client connected");
     }
+
+    
 }

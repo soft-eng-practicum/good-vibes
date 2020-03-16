@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class ServerAutoStart : NetworkManager
 {
     public bool isAtStartup = true;
-    NetworkClient myClient;
+
     void Update()
     {
         if (isAtStartup)

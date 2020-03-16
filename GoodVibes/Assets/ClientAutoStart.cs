@@ -10,7 +10,7 @@ public class ClientAutoStart : NetworkManager
 
     void Update()
     {
-        if (isAtStartup)
+        if (isAtStartup && Application.platform == RuntimePlatform.WindowsEditor)
         {
             SetupClient();
         }

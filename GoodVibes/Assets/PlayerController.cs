@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 public class PlayerController : NetworkBehaviour
@@ -13,7 +14,15 @@ public class PlayerController : NetworkBehaviour
 
     InputField myField;
     Text postPanel;
-    
+
+    Text connecting;
+    int timeLeft;
+
+    private void Awake()
+    {
+        timeLeft = 3;
+        print("timeLeft set");
+    }
 
     public override void OnStartServer()
     {
@@ -23,11 +32,71 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        myField = GameObject.Find("InputField").GetComponent<InputField>();
-        postPanel = GameObject.Find("Posts").GetComponent<Text>();
+        /*if (SceneManager.GetActiveScene().name == "ClientScene")
+        {
+            myField = GameObject.Find("InputField").GetComponent<InputField>();
+            postPanel = GameObject.Find("Posts").GetComponent<Text>();
 
-        GameObject.Find("PostMsg").GetComponent<Button>().onClick.AddListener(postMsg);
-        GameObject.Find("GetPosts").GetComponent<Button>().onClick.AddListener(loadPosts);
+            GameObject.Find("PostMsg").GetComponent<Button>().onClick.AddListener(postMsg);
+            GameObject.Find("GetPosts").GetComponent<Button>().onClick.AddListener(loadPosts);
+        }*/
+
+        if (SceneManager.GetActiveScene().name == "Disconnected")
+        {
+            connecting = GameObject.Find("Connecting").GetComponent<Text>();
+
+            //ask for scene change
+            CmdAskLoadConnectingScene();
+        }
+
+        if (SceneManager.GetActiveScene().name == "Connecting")
+        {
+            connecting = GameObject.Find("Connecting").GetComponent<Text>();
+            
+            //ask for scene change
+            CmdAskLoadLogInScene();
+        }
+
+        if (SceneManager.GetActiveScene().name == "Login")
+        {
+            Screen.orientation = ScreenOrientation.Portrait;
+        }
+    }
+
+    [Command]
+    public void CmdAskLoadConnectingScene()
+    {
+        RpcClientLoadConnectingScene();
+    }
+
+    [Command]
+    public void CmdAskLoadLogInScene()
+    {
+        RpcClientLoadLogInScene();
+    }
+
+    [ClientRpc]
+    public void RpcClientLoadConnectingScene()
+    {
+        SceneManager.LoadScene("Connecting");
+    }
+
+    [ClientRpc]
+    public void RpcClientLoadLogInScene()
+    {
+        StartCoroutine(ClientConnected());
+    }
+
+    IEnumerator ClientConnected()
+    {
+        print("timeLeft: " + timeLeft);
+        connecting.text = "Connected! Login screen will show up in " + timeLeft + " seconds";
+        yield return new WaitForSeconds(1);
+        timeLeft--;
+        if (timeLeft == 0)
+            SceneManager.LoadScene("Login");
+        else
+            StartCoroutine(ClientConnected());
     }
 
     [Command]
