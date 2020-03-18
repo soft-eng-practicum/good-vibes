@@ -22,6 +22,7 @@ public class PlayerController : NetworkBehaviour
     {
         timeLeft = 3;
         print("timeLeft set");
+        DontDestroyOnLoad(this.gameObject);
     }
 
     public override void OnStartServer()
@@ -57,7 +58,7 @@ public class PlayerController : NetworkBehaviour
             CmdAskLoadLogInScene();
         }
 
-        if (SceneManager.GetActiveScene().name == "Login")
+        if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             Screen.orientation = ScreenOrientation.Portrait;
         }
@@ -94,7 +95,7 @@ public class PlayerController : NetworkBehaviour
         yield return new WaitForSeconds(1);
         timeLeft--;
         if (timeLeft == 0)
-            SceneManager.LoadScene("Login");
+            SceneManager.LoadScene("MainMenu");
         else
             StartCoroutine(ClientConnected());
     }

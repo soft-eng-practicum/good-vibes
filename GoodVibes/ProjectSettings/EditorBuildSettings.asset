@@ -6,21 +6,21 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Scenes/ClientScene.unity
+    path: Assets/Jesse/Scenes/ClientScene.unity
     guid: 89bd91d2d982f4e4cb11dceee44afe70
   - enabled: 0
-    path: Assets/Scenes/ServerScene.unity
+    path: Assets/Jesse/Scenes/ServerScene.unity
     guid: 12326e4a7faaaff4fb228ccbf8ab8209
   - enabled: 0
-    path: Assets/Scenes/TestScene.unity
+    path: Assets/Jesse/Scenes/TestScene.unity
     guid: 17b5b314ccdadfe4893ad580bf8a9372
   - enabled: 1
-    path: Assets/Scenes/Disconnected.unity
+    path: Assets/Jesse/Scenes/Disconnected.unity
     guid: e8a90dd2f58633845abdb4ca288ac6fc
   - enabled: 1
-    path: Assets/Scenes/Connecting.unity
+    path: Assets/Jesse/Scenes/Connecting.unity
     guid: 5684264c58097fd4b8a9e948a0ecabcb
   - enabled: 1
-    path: Assets/Scenes/Login.unity
+    path: Assets/Jesse/Scenes/MainMenu.unity
     guid: 3a12932d59c92b64391864db65da8536
   m_configObjects: {}
