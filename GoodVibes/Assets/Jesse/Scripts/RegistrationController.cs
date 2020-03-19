@@ -8,13 +8,11 @@ using DigiWar.Security.Cryptography;
 using System.Text;
 using UnityEngine.SceneManagement;
 
-public class RegistrationController : MonoBehaviour
+public class RegistrationController : NetworkBehaviour
 {
     [SerializeField] InputField clawmailField;
     [SerializeField] InputField passwordField;
     [SerializeField] Button registerBtn;
-
-    MainMenuController mmc;
 
     private string salt;
     private string hash;
@@ -33,19 +31,22 @@ public class RegistrationController : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
-            mmc = GetComponent<MainMenuController>();
             clawmailField = GameObject.Find("ClawmailField").GetComponent<InputField>();
             passwordField = GameObject.Find("PasswordField").GetComponent<InputField>();
             registerBtn = GameObject.Find("SubmitRegister").GetComponent<Button>();
         }
     }
 
-    public void CallRegister()
+    
+    [Command]
+    public void CmdCallRegister()
     {
-        StartCoroutine(Register());
+        if (isLocalPlayer)
+            return;
+        StartCoroutine(Register(clawmailField, hash, salt));
     }
 
-    IEnumerator Register()
+    IEnumerator Register(InputField clawmailField, string hash, string salt)
     {
         WWWForm form = new WWWForm();
         form.AddField("clawmail", clawmailField.text);
@@ -53,21 +54,26 @@ public class RegistrationController : MonoBehaviour
         form.AddField("salt", salt);
         WWW www = new WWW("http://localhost/sql/register.php", form);
         yield return www;
-        
+        Debug.Log("Server connected to DB");
+
         if (www.text == "0") //no errors
         {
             string update = "User created successfully.";
             Debug.Log(update);
-            //mmc show user create successfully, close register panel and open login panel
-            StartCoroutine(ShowRegistrationUpdate(update));
+            RpcShowRegistrationUpdate(update);
         }
         else
         {
             string update = "User creation failed. Error #" + www.text;
             Debug.Log(update);
-            //mmc tell user there was an error
-            StartCoroutine(ShowRegistrationUpdate(update));
+            RpcShowRegistrationUpdate(update);
         }
+    }
+
+    [ClientRpc]
+    public void RpcShowRegistrationUpdate(string update)
+    {;
+        StartCoroutine(ShowRegistrationUpdate(update));
     }
 
     IEnumerator ShowRegistrationUpdate(string update)

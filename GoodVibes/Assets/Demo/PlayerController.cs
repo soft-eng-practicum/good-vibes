@@ -4,32 +4,136 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Security.Cryptography;
+using DigiWar.Security.Cryptography;
+using System.Text;
+using UnityEngine.EventSystems;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 public class PlayerController : NetworkBehaviour
 {
-
+    #region demo stuff
     NetworkManager netMan;
     PostDB db;
 
     InputField myField;
     Text postPanel;
+    #endregion
 
     Text connecting;
     int timeLeft;
 
+    #region delegates
+    //Create an event delegate that will be used for creating methods that respond to events
+    public delegate void EventDelegate(BaseEventData baseEvent);
+    public void SelectEventMethod(UnityEngine.EventSystems.BaseEventData baseEvent)
+    {
+        Debug.Log(baseEvent.selectedObject.name + " triggered an event!");
+        VerifyInputs();
+        //baseEvent.selectedObject is the GameObject that triggered the event,
+        // so we can access its components, destroy it, or do whatever.
+    }
+    #endregion
+
+    #region registration
+    [SerializeField] InputField clawmailField;
+    [SerializeField] InputField passwordField;
+    [SerializeField] Dropdown userType;
+    [SerializeField] Button registerBtn;
+
+    private string salt;
+    private string hash;
+
+    public void CallRegister()
+    {
+        CmdCallRegister(clawmailField.text, hash, salt, userType.transform.GetChild(0).GetComponent<Text>().text);
+    }
+
+    [Command]
+    public void CmdCallRegister(string clawmailField, string hash, string salt, string userType)
+    {
+        if (isServer)
+            Debug.Log("register submit pressed");
+        StartCoroutine(Register(clawmailField, hash, salt, userType));
+    }
+
+    IEnumerator Register(string clawmailField, string hash, string salt, string userType)
+    {
+        Debug.Log("register (www) coroutine started on server");
+        WWWForm form = new WWWForm();
+        form.AddField("clawmail", clawmailField);
+        form.AddField("hash", hash);
+        form.AddField("salt", salt);
+        form.AddField("userType", userType);
+        WWW www = new WWW("http://localhost/register.php", form);
+        yield return www;
+        if (www.text == "0") //no errors
+        {
+            string update = "User created successfully.";
+            Debug.Log(update);
+            RpcShowRegistrationUpdate(update);
+        }
+        else
+        {
+            string update = "User creation failed. Error #" + www.text;
+            Debug.Log(update);
+            RpcShowRegistrationUpdate(update);
+        }
+    }
+
+    [ClientRpc]
+    public void RpcShowRegistrationUpdate(string update)
+    {
+        StartCoroutine(ShowRegistrationUpdate(update));
+    }
+
+    IEnumerator ShowRegistrationUpdate(string update)
+    {
+        GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
+        yield return new WaitForSeconds(10f);
+        GameObject.Find("ErrorMsg").GetComponent<Text>().text = "";
+    }
+
+    public void VerifyInputs()
+    {
+        print("verifying inputs");
+        if (clawmailField.text.Contains("@ggc.edu"))
+            clawmailField.text.Remove((clawmailField.text.IndexOf('@') + 7));
+
+        SHA512 sha = new SHA512Managed();
+        sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text));
+        //byte[] saltByte = sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text)); //possibly could work and lower character count? haven't tried yet
+        byte[] saltByte = sha.Hash;
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < saltByte.Length; i++)
+        {
+            strBuilder.Append(saltByte[i].ToString("x2"));
+        }
+        salt = strBuilder.ToString();
+        //salt = salt.Remove(49);
+        Debug.Log("salt: " + salt);
+        hash = UnixCrypt.Crypt(salt, passwordField.text); //HashAlgorithm.Create();
+
+        registerBtn.interactable = (clawmailField.text.Contains("@ggc.edu") && passwordField.text.Length >= 8 && userType.value != 0);
+    }
+    #endregion
+
     private void Awake()
     {
+        print("player instantiated in " + SceneManager.GetActiveScene().name);
+
         timeLeft = 3;
         print("timeLeft set");
         DontDestroyOnLoad(this.gameObject);
     }
 
+    #region demo stuff 2
     public override void OnStartServer()
     {
         netMan = GameObject.Find("NetMan").GetComponent<NetworkManager>();
         db = netMan.GetComponent<PostDB>();
     }
+    #endregion
 
     public override void OnStartLocalPlayer()
     {
@@ -58,9 +162,48 @@ public class PlayerController : NetworkBehaviour
             CmdAskLoadLogInScene();
         }
 
-        if (SceneManager.GetActiveScene().name == "MainMenu")
+        if (SceneManager.GetActiveScene().name == "MainMenu") //doesn't get called
         {
             Screen.orientation = ScreenOrientation.Portrait;
+        }
+    }
+    private void Update()
+    {
+        //SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            clawmailField = GameObject.Find("RegisterClawmailField").GetComponent<InputField>();
+            EventTrigger eventTrigger = clawmailField.GetComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            UnityEngine.Events.UnityAction<BaseEventData> callback =
+            new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
+            entry.callback.AddListener(callback);
+            eventTrigger.triggers.Add(entry);
+
+            passwordField = GameObject.Find("RegisterPasswordField").GetComponent<InputField>();
+            EventTrigger eventTrigger2 = passwordField.GetComponent<EventTrigger>();
+            EventTrigger.Entry entry2 = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            UnityEngine.Events.UnityAction<BaseEventData> callback2 =
+            new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
+            entry2.callback.AddListener(callback2);
+            eventTrigger2.triggers.Add(entry2);
+
+            userType = GameObject.Find("RegisterUserType").GetComponent<Dropdown>();
+
+            registerBtn = GameObject.Find("SubmitRegister").GetComponent<Button>();
+            registerBtn.onClick.AddListener(CallRegister);
         }
     }
 
@@ -95,11 +238,15 @@ public class PlayerController : NetworkBehaviour
         yield return new WaitForSeconds(1);
         timeLeft--;
         if (timeLeft == 0)
+        {
             SceneManager.LoadScene("MainMenu");
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
         else
             StartCoroutine(ClientConnected());
     }
 
+    #region demo
     [Command]
     public void CmdPostMessage(string s)
     {
@@ -137,9 +284,5 @@ public class PlayerController : NetworkBehaviour
             postPanel.text += posts[i] + "\n";
         }
     }
-
-
-
-
-
+    #endregion
 }

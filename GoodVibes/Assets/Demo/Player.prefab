@@ -138,3 +138,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d685d589e2ad46689d840b235029243, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clawmailField: {fileID: 0}
+  passwordField: {fileID: 0}
+  registerBtn: {fileID: 0}
