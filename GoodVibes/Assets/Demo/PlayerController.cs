@@ -5,7 +5,9 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Security.Cryptography;
-using DigiWar.Security.Cryptography;
+//using DigiWar.Security.Cryptography;
+using CryptSharp;
+using CryptSharp.Utility;
 using System.Text;
 using UnityEngine.EventSystems;
 
@@ -75,7 +77,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
-            string update = "User creation failed. Error #" + www.text;
+            string update = "User creation failed. Error: " + www.text;
             Debug.Log(update);
             RpcShowRegistrationUpdate(update);
         }
@@ -100,19 +102,24 @@ public class PlayerController : NetworkBehaviour
         if (clawmailField.text.Contains("@ggc.edu"))
             clawmailField.text.Remove((clawmailField.text.IndexOf('@') + 7));
 
-        SHA512 sha = new SHA512Managed();
-        sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text));
-        //byte[] saltByte = sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text)); //possibly could work and lower character count? haven't tried yet
-        byte[] saltByte = sha.Hash;
-        StringBuilder strBuilder = new StringBuilder();
-        for (int i = 0; i < saltByte.Length; i++)
+        if (clawmailField.text != "")
         {
-            strBuilder.Append(saltByte[i].ToString("x2"));
+            //byte[] password = ASCIIEncoding.ASCII.GetBytes("" + passwordField.text);
+            SHA512 sha = new SHA512Managed();
+            byte[] saltByte = sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text)); //possibly could work and lower character count? haven't tried yet
+                                                                                                                           //byte[] saltByte = sha.Hash;
+            StringBuilder strBuilder = new StringBuilder();
+            for (int i = 0; i < saltByte.Length; i++)
+            {
+                strBuilder.Append(saltByte[i].ToString("x2"));
+            }
+            salt = strBuilder.ToString();
+            //salt = salt.Remove(50);
+            Debug.Log("salt: " + salt);
+
+            salt = Crypter.Blowfish.GenerateSalt();
+            hash = Crypter.Blowfish.Crypt(passwordField.text, salt); //hash = UnixCrypt.Crypt(salt, passwordField.text); //HashAlgorithm.Create();
         }
-        salt = strBuilder.ToString();
-        //salt = salt.Remove(49);
-        Debug.Log("salt: " + salt);
-        hash = UnixCrypt.Crypt(salt, passwordField.text); //HashAlgorithm.Create();
 
         registerBtn.interactable = (clawmailField.text.Contains("@ggc.edu") && passwordField.text.Length >= 8 && userType.value != 0);
     }
@@ -207,6 +214,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    #region client startup
     [Command]
     public void CmdAskLoadConnectingScene()
     {
@@ -214,9 +222,9 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    public void CmdAskLoadLogInScene()
+    public void CmdAskLoadMainMenuScene()
     {
-        RpcClientLoadLogInScene();
+        RpcClientLoadMainMenuScene();
     }
 
     [ClientRpc]
@@ -226,7 +234,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcClientLoadLogInScene()
+    public void RpcClientLoadMainMenuScene()
     {
         StartCoroutine(ClientConnected());
     }
@@ -245,6 +253,7 @@ public class PlayerController : NetworkBehaviour
         else
             StartCoroutine(ClientConnected());
     }
+    #endregion
 
     #region demo
     [Command]
