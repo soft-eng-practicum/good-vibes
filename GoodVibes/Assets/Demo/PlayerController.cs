@@ -25,6 +25,9 @@ public class PlayerController : NetworkBehaviour
     Text connecting;
     int timeLeft;
 
+    string msgHint;
+    string clawmail;
+
     #region delegates
     //Create an event delegate that will be used for creating methods that respond to events
     public delegate void EventDelegate(BaseEventData baseEvent);
@@ -93,35 +96,138 @@ public class PlayerController : NetworkBehaviour
     {
         GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
         yield return new WaitForSeconds(10f);
-        GameObject.Find("ErrorMsg").GetComponent<Text>().text = "";
+        GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
     }
 
     public void VerifyInputs()
     {
         print("verifying inputs");
-        if (clawmailField.text.Contains("@ggc.edu"))
-            clawmailField.text.Remove((clawmailField.text.IndexOf('@') + 7));
 
-        if (clawmailField.text != "")
+        if (GameObject.Find("MainMenu").GetComponent<MainMenuController>().registerPanel.activeSelf)
         {
-            //byte[] password = ASCIIEncoding.ASCII.GetBytes("" + passwordField.text);
-            SHA512 sha = new SHA512Managed();
-            byte[] saltByte = sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text)); //possibly could work and lower character count? haven't tried yet
-                                                                                                                           //byte[] saltByte = sha.Hash;
-            StringBuilder strBuilder = new StringBuilder();
-            for (int i = 0; i < saltByte.Length; i++)
+            if (clawmailField.text.Contains("@ggc.edu"))
+                clawmailField.text.Remove((clawmailField.text.IndexOf('@') + 7));
+
+            if (clawmailField.text != "" && passwordField.text != "")
             {
-                strBuilder.Append(saltByte[i].ToString("x2"));
+                //byte[] password = ASCIIEncoding.ASCII.GetBytes("" + passwordField.text);
+                /*SHA512 sha = new SHA512Managed();
+                byte[] saltByte = sha.ComputeHash(ASCIIEncoding.ASCII.GetBytes("ourlordandsaviorkirby" + clawmailField.text)); //possibly could work and lower character count? haven't tried yet
+                                                                                                                               //byte[] saltByte = sha.Hash;
+                StringBuilder strBuilder = new StringBuilder();
+                for (int i = 0; i < saltByte.Length; i++)
+                {
+                    strBuilder.Append(saltByte[i].ToString("x2"));
+                }
+                salt = strBuilder.ToString();
+                //salt = salt.Remove(50);
+                //Debug.Log("salt: " + salt);*/
+
+                /*CrypterOptionKey key = new CrypterOptionKey("A key used to customize the salt based on the username", clawmailField.text.GetType());
+                CrypterOptions option = new CrypterOptions();
+                option.Add(key, clawmailField.text);
+                salt = Crypter.Blowfish.GenerateSalt(option);*/
+                //salt = clawmailField.text + "ourlordandsaviorkirby";
+                //salt = Crypter.Sha512.GenerateSalt();
+                salt = Crypter.Blowfish.GenerateSalt();
+                //print("cancrypt: " + Crypter.Blowfish.CanCrypt(salt));
+                //salt = Crypter.Blowfish.Crypt(salt);
+                Debug.Log("salt: " + salt);
+                //hash = passwordField.text + salt;
+                hash = Crypter.Blowfish.Crypt(passwordField.text, salt); //hash = UnixCrypt.Crypt(salt, passwordField.text); //HashAlgorithm.Create();
+                Debug.Log("pswd: " + hash);
+                Debug.Log("registration rehash: " + Crypter.Blowfish.Crypt(passwordField.text, salt));
             }
-            salt = strBuilder.ToString();
-            //salt = salt.Remove(50);
-            Debug.Log("salt: " + salt);
 
-            salt = Crypter.Blowfish.GenerateSalt();
-            hash = Crypter.Blowfish.Crypt(passwordField.text, salt); //hash = UnixCrypt.Crypt(salt, passwordField.text); //HashAlgorithm.Create();
+            registerBtn.interactable = (clawmailField.text.Contains("@ggc.edu") && !clawmailField.text.Substring(0, 1).Equals("@") && passwordField.text.Length >= 8 && userType.value != 0);
         }
+        else if (GameObject.Find("MainMenu").GetComponent<MainMenuController>().loginPanel.activeSelf)
+        {
+            if (clawmailFieldLogin.text.Contains("@ggc.edu"))
+                clawmailFieldLogin.text.Remove((clawmailFieldLogin.text.IndexOf('@') + 7));
 
-        registerBtn.interactable = (clawmailField.text.Contains("@ggc.edu") && passwordField.text.Length >= 8 && userType.value != 0);
+            loginBtn.interactable = (clawmailFieldLogin.text.Contains("@ggc.edu") && !clawmailFieldLogin.text.Substring(0, 1).Equals("@"));
+        }
+    }
+    #endregion
+
+    #region login
+    [SerializeField] InputField clawmailFieldLogin;
+    [SerializeField] InputField passwordFieldLogin;
+    [SerializeField] Button loginBtn;
+
+    public void CallLogin()
+    {
+        CmdCallLogin(clawmailFieldLogin.text);
+    }
+
+    [Command]
+    public void CmdCallLogin(string clawmailFieldLogin)
+    {
+        if (isServer)
+            Debug.Log("login submit pressed");
+        StartCoroutine(Login(clawmailFieldLogin));
+    }
+
+    IEnumerator Login(string clawmailFieldLogin)
+    {
+        Debug.Log("login (www) coroutine started on server");
+        WWWForm form = new WWWForm();
+        form.AddField("clawmail", clawmailFieldLogin);
+        WWW www = new WWW("http://localhost/login.php", form);
+        yield return www;
+        /*if (www.text == "0") //no errors
+        {
+            string update = "User logged in successfully.";
+            Debug.Log(update);
+            RpcShowLoginUpdate(update);
+        }
+        else
+        {
+            string update = "User log in failed. Error: " + www.text;
+            Debug.Log(update);
+            RpcShowLoginUpdate(update);
+        }*/
+        if (www.text.Contains("0"))
+        {
+            string[] results = www.text.Split('/');
+            string usersalt = results[1];
+            string userhash = results[2];
+            RpcSendSaltToClient(usersalt, userhash);
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSendSaltToClient(string usersalt, string userhash)
+    {
+        print("received usersalt: " + usersalt + ", received userhash: " + userhash);
+        Debug.Log("client checking login credentials");
+        if (Crypter.Blowfish.Crypt(passwordFieldLogin.text, usersalt) == userhash)
+        {
+            Debug.Log("correct credentials");
+            clawmail = clawmailFieldLogin.text;
+            StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true));
+        }
+        else
+            StartCoroutine(ShowLoginUpdate("Credentials mismatch :(", false));
+        Debug.Log("rehash: " + Crypter.Blowfish.Crypt(passwordField.text, usersalt) + ", userhash: " + userhash);
+    }
+
+    IEnumerator ShowLoginUpdate(string update, bool check)
+    {
+        if (check)
+        {
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
+            yield return new WaitForSeconds(3f);
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+            //deactivate login/register panel and show main menu stuff
+        }
+        else
+        {
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
+            yield return new WaitForSeconds(10f);
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+        }
     }
     #endregion
 
@@ -166,7 +272,7 @@ public class PlayerController : NetworkBehaviour
             connecting = GameObject.Find("Connecting").GetComponent<Text>();
             
             //ask for scene change
-            CmdAskLoadLogInScene();
+            CmdAskLoadMainMenuScene();
         }
 
         if (SceneManager.GetActiveScene().name == "MainMenu") //doesn't get called
@@ -183,6 +289,9 @@ public class PlayerController : NetworkBehaviour
     {
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
+            msgHint = GameObject.Find("ErrorMsg").GetComponent<Text>().text;
+
+            #region register panel 
             clawmailField = GameObject.Find("RegisterClawmailField").GetComponent<InputField>();
             EventTrigger eventTrigger = clawmailField.GetComponent<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry
@@ -211,12 +320,42 @@ public class PlayerController : NetworkBehaviour
 
             registerBtn = GameObject.Find("SubmitRegister").GetComponent<Button>();
             registerBtn.onClick.AddListener(CallRegister);
+            #endregion
+
+            #region login panel
+            clawmailFieldLogin = GameObject.Find("LoginClawmailField").GetComponent<InputField>();
+            EventTrigger eventTrigger3 = clawmailFieldLogin.GetComponent<EventTrigger>();
+            EventTrigger.Entry entry3 = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            UnityEngine.Events.UnityAction<BaseEventData> callback3 =
+            new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
+            entry3.callback.AddListener(callback3);
+            eventTrigger3.triggers.Add(entry3);
+
+            passwordFieldLogin = GameObject.Find("LoginPasswordField").GetComponent<InputField>();
+            EventTrigger eventTrigger4 = passwordFieldLogin.GetComponent<EventTrigger>();
+            EventTrigger.Entry entry4 = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.Select,
+                callback = new EventTrigger.TriggerEvent()
+            };
+            UnityEngine.Events.UnityAction<BaseEventData> callback4 =
+            new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
+            entry4.callback.AddListener(callback4);
+            eventTrigger4.triggers.Add(entry4);
+
+            loginBtn = GameObject.Find("SubmitLogin").GetComponent<Button>();
+            loginBtn.onClick.AddListener(CallLogin);
+            #endregion
         }
     }
 
     #region client startup
     [Command]
-    public void CmdAskLoadConnectingScene()
+    public void CmdAskLoadConnectingScene() //test to see if messages get passed between server<-->client and scene changes on server
     {
         RpcClientLoadConnectingScene();
     }
