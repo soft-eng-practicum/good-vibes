@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class CheckSingleReply : MonoBehaviour
+public class CheckSingleReply : PlayerController
 {
 
-    public Text topic;
-    public InputField inputField;
-    public GameObject inputs;
-    public GameObject scrollView;
-    public Button postMsg;
-    public string button;
-    public Canvas replyCanvas;
+    private Text topic;
+    private InputField inputField;
+    private GameObject inputs;
+    private GameObject scrollView;
+    private Button postMsg;
+    private string button;
+    private Canvas replyCanvas;
+    private GameObject playerPrefab;
+
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +25,7 @@ public class CheckSingleReply : MonoBehaviour
         postMsg = GameObject.Find("PostMsg").GetComponent<Button>();
         inputs = GameObject.Find("reply");
         topic = GameObject.Find("topic").GetComponent<Text>();
-        inputField = GameObject.Find("InputField").GetComponent<InputField>();
+        inputField = GameObject.Find("ReplyInputField").GetComponent<InputField>();
         scrollView = GameObject.Find("Scroll View");
 
         //inputs.SetActive(false);
@@ -39,7 +42,25 @@ public class CheckSingleReply : MonoBehaviour
 
     }
 
-    public void topicClicked()
+    [Command]
+    public void CmdCallRegister()
+    {
+        if (isLocalPlayer)
+            return;
+        StartCoroutine(Register(inputField, clawmail));
+    }
+
+    IEnumerator Register(InputField replyField, string clawmail)
+    {
+        WWWForm replyForm = new WWWForm();
+        replyForm.AddField("reply", replyField.text);
+        replyForm.AddField("clawmail", clawmail);
+        WWW www = new WWW("http://localhost/sql/register.php", replyForm);
+        yield return www;
+        Debug.Log("Server connected to DB");
+    }
+
+        public void topicClicked()
     {
         replyCanvas = GameObject.Find("ReplyCanvas").GetComponent<Canvas>();
         replyCanvas.enabled = true;
@@ -52,4 +73,6 @@ public class CheckSingleReply : MonoBehaviour
         topic.text = txt;
         scrollView.SetActive(false);
     }
+
+    
 }
