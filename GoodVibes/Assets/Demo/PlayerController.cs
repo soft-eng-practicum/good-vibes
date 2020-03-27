@@ -26,7 +26,9 @@ public class PlayerController : NetworkBehaviour
     int timeLeft;
 
     string msgHint;
-    string clawmail;
+    protected string clawmail;
+
+    MainMenuController mmc;
 
     #region delegates
     //Create an event delegate that will be used for creating methods that respond to events
@@ -221,12 +223,53 @@ public class PlayerController : NetworkBehaviour
             yield return new WaitForSeconds(3f);
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
             //deactivate login/register panel and show main menu stuff
+            mmc.CloseLoginRegisterPanels();
+            mmc.OpenMainMenuOptions(clawmail);
         }
         else
         {
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
             yield return new WaitForSeconds(10f);
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+        }
+    }
+    #endregion
+
+    #region view public topic vibes
+    Text test;
+    [SerializeField] Button refreshPublicTopicVibesBtn;
+
+    public void RefreshPublicTopicVibes()
+    {
+        CmdRefreshPublicTopicVibes();
+    }
+
+    [Command]
+    void CmdRefreshPublicTopicVibes()
+    {
+        StartCoroutine(GetPublicTopicVibes());
+    }
+
+    IEnumerator GetPublicTopicVibes()
+    {
+        Debug.Log("get public topic vibes (www) coroutine started on server");
+        WWW www = new WWW("http://localhost/publictopicvibes.php");
+        yield return www;
+        if (www.text != null && www.text != "")
+        {
+            string[] results = www.text.Split('/');
+            RpcSendPublicVibesToClient(results);
+        }
+        else
+            RpcSendPublicVibesToClient(new string[] {"no results"});
+    }
+
+    [ClientRpc]
+    public void RpcSendPublicVibesToClient(string[] results)
+    {
+        foreach (string result in results)
+        {
+            test.text += result;
         }
     }
     #endregion
@@ -289,6 +332,8 @@ public class PlayerController : NetworkBehaviour
     {
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
+            mmc = GameObject.Find("MainMenu").GetComponent<MainMenuController>();
+
             msgHint = GameObject.Find("ErrorMsg").GetComponent<Text>().text;
 
             #region register panel 
@@ -349,6 +394,12 @@ public class PlayerController : NetworkBehaviour
 
             loginBtn = GameObject.Find("SubmitLogin").GetComponent<Button>();
             loginBtn.onClick.AddListener(CallLogin);
+            #endregion
+
+            #region public topic vibes panel
+            test = mmc.testText.GetComponent<Text>();
+            refreshPublicTopicVibesBtn = GameObject.Find("PublicTopicVibesRefreshBtn").GetComponent<Button>();
+            refreshPublicTopicVibesBtn.onClick.AddListener(RefreshPublicTopicVibes);
             #endregion
         }
     }

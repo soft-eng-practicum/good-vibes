@@ -13,6 +13,9 @@ public class MainMenuController : MonoBehaviour
     public GameObject registerBtn;
 
     public GameObject mainMenuPanels;
+    public GameObject publicTopicVibesPanel;
+    public GameObject publicTopicVibesBtn;
+    public GameObject testText;
 
     private void Start()
     {
@@ -38,6 +41,15 @@ public class MainMenuController : MonoBehaviour
     void OpenLoginRegisterPanels()
     {
         loginRegisterPanels.SetActive(true);
+        SetRegisterPanel(false);
+        SetLoginPanel(false);
+        mainMenuPanels.SetActive(false);
+        publicTopicVibesPanel.SetActive(false);
+    }
+
+    public void CloseLoginRegisterPanels()
+    {
+        loginRegisterPanels.SetActive(false);
         SetRegisterPanel(false);
         SetLoginPanel(false);
     }
@@ -76,5 +88,24 @@ public class MainMenuController : MonoBehaviour
     void SetLoginPanel(bool set)
     {
         loginPanel.SetActive(set);
+    }
+
+    public void OpenMainMenuOptions(string username)
+    {
+        mainMenuPanels.SetActive(true);
+        mainMenuPanels.transform.GetChild(1).GetComponent<Text>().text = "Welcome, " + username + "!";
+    }
+
+    public void TogglePublicTopicVibesPanel()
+    {
+        if (publicTopicVibesPanel.activeSelf)
+            publicTopicVibesPanel.SetActive(false);
+        else /*if (!registerPanel.activeSelf)*/ //other main menu panels will go here
+            publicTopicVibesPanel.SetActive(true);
+        /*else if (registerPanel.activeSelf)
+        {
+            ToggleRegisterPanel();
+            SetLoginPanel(true);
+        }*/
     }
 }
