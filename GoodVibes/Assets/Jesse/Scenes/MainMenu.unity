@@ -2347,7 +2347,7 @@ PrefabInstance:
     - target: {fileID: 3978187096999105844, guid: 0d8af3ba17227554295fa9399a32d78d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000091552734
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 3978187097282409540, guid: 0d8af3ba17227554295fa9399a32d78d,
         type: 3}
@@ -3222,8 +3222,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 110443362}
-        m_MethodName: TogglePublicTopicVibesPanel
+      - m_Target: {fileID: 7598906593303434414, guid: c3cae5c8861e52d4c8a78f3bddf45831,
+          type: 3}
+        m_MethodName: displayMessagesCanvas
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

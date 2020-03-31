@@ -15,6 +15,7 @@ public class CheckSingleReply : PlayerController
     private Button postMsg;
     private string button;
     private Canvas replyCanvas;
+    private Canvas messagesCanvas;
     private GameObject playerPrefab;
 
 
@@ -22,6 +23,7 @@ public class CheckSingleReply : PlayerController
     void Start()
     {
         replyCanvas = GameObject.Find("ReplyCanvas").GetComponent<Canvas>();
+        messagesCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         postMsg = GameObject.Find("PostMsg").GetComponent<Button>();
         inputs = GameObject.Find("reply");
         topic = GameObject.Find("topic").GetComponent<Text>();
@@ -29,6 +31,7 @@ public class CheckSingleReply : PlayerController
         scrollView = GameObject.Find("Scroll View");
 
         //inputs.SetActive(false);
+        messagesCanvas.enabled = false;
         replyCanvas.enabled = false;
         
     }
@@ -55,7 +58,7 @@ public class CheckSingleReply : PlayerController
         WWWForm replyForm = new WWWForm();
         replyForm.AddField("reply", replyField.text);
         replyForm.AddField("clawmail", clawmail);
-        WWW www = new WWW("http://localhost/sql/register.php", replyForm);
+        WWW www = new WWW("http://localhost/sql/sendreply.php", replyForm);
         yield return www;
         Debug.Log("Server connected to DB");
     }
@@ -72,6 +75,12 @@ public class CheckSingleReply : PlayerController
         string txt = GameObject.Find(button).GetComponentInChildren<Text>().text;
         topic.text = txt;
         scrollView.SetActive(false);
+    }
+
+    public void displayMessagesCanvas()
+    {
+        messagesCanvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+        messagesCanvas.enabled = true;
     }
 
     
