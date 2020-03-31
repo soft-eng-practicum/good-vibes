@@ -146,6 +146,7 @@ MonoBehaviour:
   clawmailFieldLogin: {fileID: 0}
   passwordFieldLogin: {fileID: 0}
   loginBtn: {fileID: 0}
+  refreshPublicTopicVibesBtn: {fileID: 0}
 --- !u!114 &7598906593303434414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,10 +159,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d0614c521e39b45a6f097a1f25a32a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: {fileID: 0}
-  inputField: {fileID: 0}
-  inputs: {fileID: 0}
-  scrollView: {fileID: 0}
-  postMsg: {fileID: 0}
-  button: 
-  replyCanvas: {fileID: 0}
+  clawmailField: {fileID: 0}
+  passwordField: {fileID: 0}
+  userType: {fileID: 0}
+  registerBtn: {fileID: 0}
+  clawmailFieldLogin: {fileID: 0}
+  passwordFieldLogin: {fileID: 0}
+  loginBtn: {fileID: 0}
+  refreshPublicTopicVibesBtn: {fileID: 0}
