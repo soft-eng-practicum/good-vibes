@@ -45,22 +45,35 @@ public class CheckSingleReply : PlayerController
 
     }
 
-    [Command]
-    public void CmdCallRegister()
+    public void postReply()
     {
-        if (isLocalPlayer)
-            return;
-        StartCoroutine(Register(inputField, clawmail));
+        CmdPostReply(inputField.text, clawmail);
     }
 
-    IEnumerator Register(InputField replyField, string clawmail)
+    [Command]
+    public void CmdPostReply(string replyField, string clawmail)
+    {
+        if (isServer)
+            return;
+        StartCoroutine(Reply(replyField, clawmail));
+    }
+
+    IEnumerator Reply(string replyField, string clawmail)
     {
         WWWForm replyForm = new WWWForm();
-        replyForm.AddField("reply", replyField.text);
+        replyForm.AddField("reply", replyField);
         replyForm.AddField("clawmail", clawmail);
-        WWW www = new WWW("http://localhost/sql/sendreply.php", replyForm);
+        replyForm.AddField("messageID", 1);
+        WWW www = new WWW("http://localhost/sql/sendReply.php", replyForm);
         yield return www;
-        Debug.Log("Server connected to DB");
+
+        if (www.text == "0") //no errors
+        {
+            string update = "User created successfully.";
+            Debug.Log(update);
+            RpcShowRegistrationUpdate(update);
+        }
+        //Debug.Log("Server connected to DB");
     }
 
         public void topicClicked()
