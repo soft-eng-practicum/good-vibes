@@ -10,6 +10,8 @@ using CryptSharp;
 using CryptSharp.Utility;
 using System.Text;
 using UnityEngine.EventSystems;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 public class PlayerController : NetworkBehaviour
@@ -238,6 +240,7 @@ public class PlayerController : NetworkBehaviour
     #region view public topic vibes
     Text test;
     [SerializeField] Button refreshPublicTopicVibesBtn;
+    List<string[]> results;
 
     public void RefreshPublicTopicVibes()
     {
@@ -257,20 +260,41 @@ public class PlayerController : NetworkBehaviour
         yield return www;
         if (www.text != null && www.text != "")
         {
-            string[] results = www.text.Split('/');
-            RpcSendPublicVibesToClient(results);
+            RpcSendPublicVibesToClient(www.text);
         }
         else
-            RpcSendPublicVibesToClient(new string[] {"no results"});
+            RpcSendPublicVibesToClientFail("no results");
     }
 
     [ClientRpc]
-    public void RpcSendPublicVibesToClient(string[] results)
+    public void RpcSendPublicVibesToClient(string webresult)
     {
-        foreach (string result in results)
+        results = new List<string[]>();
+        string[] text = webresult.Split('/');
+        foreach (string res in text)
         {
-            test.text += result;
+            string[] ree = res.Split(':');
+            results.Add(ree);
         }
+
+        //test.text = "";
+        int topicIndex = 0;
+        foreach (string[] data in results)
+        {
+            for (int i = 0; i < 1; i++)
+            {
+                //test.text += data[i];
+                topics[topicIndex].transform.GetChild(0).GetComponent<Text>().text = data[i];
+                topicIndex++;
+            }
+            //test.text += "\n";
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSendPublicVibesToClientFail(string results)
+    {
+        test.text = "results";
     }
     #endregion
 
@@ -286,28 +310,29 @@ public class PlayerController : NetworkBehaviour
     private GameObject playerPrefab;
     private GameObject updateMsg;
     private GameObject[] topics;
+    int msgID;
 
     public void postReply()
     {
-        CmdPostReply(inputField.text, clawmail);
+        CmdPostReply(inputField.text, clawmail, msgID);
     }
 
     [Command]
-    public void CmdPostReply(string replyField, string clawmail)
+    public void CmdPostReply(string replyField, string clawmail, int messageID)
     {
         if (isServer)
             Debug.Log("post reply has been pressed");
-        StartCoroutine(Reply(replyField, clawmail));
+        StartCoroutine(Reply(replyField, clawmail, messageID));
     }
 
-    IEnumerator Reply(string replyField, string clawmail)
+    IEnumerator Reply(string replyField, string clawmail, int messageID)
     {
         Debug.Log("post reply to topic vibe (www) coroutine started on server");
         WWWForm replyForm = new WWWForm();
         replyForm.AddField("reply", replyField);
         replyForm.AddField("clawmail", clawmail);
-        replyForm.AddField("messageID", 1);
-        WWW www = new WWW("http://localhost/sql/sendReply.php", replyForm);
+        replyForm.AddField("messageID", messageID);
+        WWW www = new WWW("http://localhost/sendReply.php", replyForm);
         yield return www;
 
         if (www.text == "0") //no errors
@@ -342,6 +367,11 @@ public class PlayerController : NetworkBehaviour
         Debug.Log("tc" + scrollView.activeInHierarchy);
         string txt = GameObject.Find(button).GetComponentInChildren<Text>().text;
         topic.text = txt;
+        foreach (string[] data in results)
+        {
+            if (data[0] == topic.text)
+                msgID = int.Parse(data[2]);
+        }
         scrollView.SetActive(false);
     }
 
@@ -478,6 +508,7 @@ public class PlayerController : NetworkBehaviour
             test = mmc.testText.GetComponent<Text>();
             refreshPublicTopicVibesBtn = GameObject.Find("PublicTopicVibesRefreshBtn").GetComponent<Button>();
             refreshPublicTopicVibesBtn.onClick.AddListener(RefreshPublicTopicVibes);
+            refreshPublicTopicVibesBtn.onClick.AddListener(displayMessagesCanvas);
             #endregion
 
             #region reply to public topic vibes panel
