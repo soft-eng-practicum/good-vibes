@@ -140,4 +140,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clawmailField: {fileID: 0}
   passwordField: {fileID: 0}
+  userType: {fileID: 0}
   registerBtn: {fileID: 0}
+  clawmailFieldLogin: {fileID: 0}
+  passwordFieldLogin: {fileID: 0}
+  loginBtn: {fileID: 0}
+  refreshPublicTopicVibesBtn: {fileID: 0}
