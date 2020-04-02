@@ -279,11 +279,9 @@ public class PlayerController : NetworkBehaviour
             Debug.Log("public data length: " + data.Length);
             for (int i = 0; i < 1; i++)
             {
-                //test.text += data[i];
                 topics[topicIndex].transform.GetChild(0).GetComponent<Text>().text = data[i];
                 topicIndex++;
             }
-            //test.text += "\n";
         }
     }
 
@@ -304,6 +302,7 @@ public class PlayerController : NetworkBehaviour
     private Canvas replyCanvas;
     private Canvas messagesCanvas;
     private GameObject playerPrefab;
+    private GameObject getPosts;
     private GameObject updateMsg;
     private GameObject[] topics;
     int msgID;
@@ -354,6 +353,7 @@ public class PlayerController : NetworkBehaviour
 
     public void topicClicked()
     {
+        refreshPublicTopicVibesBtn.enabled = false;
         replyCanvas = GameObject.Find("ReplyCanvas").GetComponent<Canvas>();
         replyCanvas.enabled = true;
         topic = GameObject.Find("topic").GetComponent<Text>();
@@ -369,6 +369,13 @@ public class PlayerController : NetworkBehaviour
                 msgID = int.Parse(data[2]);
         }
         scrollView.SetActive(false);
+    }
+
+    void GetPosts()
+    {
+        refreshPublicTopicVibesBtn.enabled = true;
+        replyCanvas.enabled = false;
+        scrollView.SetActive(true);
     }
 
     public void displayMessagesCanvas()
@@ -390,6 +397,10 @@ public class PlayerController : NetworkBehaviour
     public void RefreshPersonalTopicVibes()
     {
         CmdRefreshPersonalTopicVibes(clawmail);
+        foreach (Transform msg in personalTopics.transform.GetComponent<Transform>())
+        {
+            Destroy(msg.gameObject);
+        }
     }
 
     [Command]
@@ -450,7 +461,7 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     public void RpcSendPersonalVibesToClientFail(string results)
     {
-        test.text = "results";
+        test.text = results;
     }
 
     void PersonalTopicClicked()
@@ -521,6 +532,15 @@ public class PlayerController : NetworkBehaviour
             {
                 Debug.Log("field in row of data: " + s);
             }
+            if (PersonalReplyMsg == null)
+                Debug.Log("personal reply msg prefab is null");
+            else if (personalTopicVibesRepliesScrollview == null)
+            {
+                Debug.Log("scrollview is null");
+                personalTopicVibesRepliesScrollview = GameObject.Find("PersonalTopicVibesRepliesScrollview");
+            }
+            if (personalTopicVibesRepliesScrollview == null)
+                Debug.Log("scrollview is still null");
             GameObject txt = Instantiate(PersonalReplyMsg, personalTopicVibesRepliesScrollview.transform);
             txt.GetComponent<Text>().text = data[0] + "\n- " + data[1]; //subject
         }
@@ -678,6 +698,7 @@ public class PlayerController : NetworkBehaviour
             replyCanvas.enabled = false;
 
             postReplyMsg.onClick.AddListener(postReply);
+            postReplyMsg.onClick.AddListener(GetPosts);
             foreach (GameObject button in topics)
             {
                 button.GetComponent<Button>().onClick.AddListener(topicClicked);
@@ -689,7 +710,10 @@ public class PlayerController : NetworkBehaviour
             mmc.personalTopicVibesBtn.GetComponent<Button>().onClick.AddListener(RefreshPersonalTopicVibes);
             personalTopicVibesRepliesPanel = GameObject.Find("PersonalTopicVibesRepliesPanel");
             personalTopicVibesRepliesPanel.GetComponent<Button>().onClick.AddListener(ClosePersonalTopicVibesRepliesPanel);
+            personalTopicVibesRepliesPanel.SetActive(false);
             personalTopicVibesRepliesScrollview = GameObject.Find("PersonalTopicVibesRepliesScrollview");
+            getPosts = GameObject.Find("GetPosts");
+            getPosts.GetComponent<Button>().onClick.AddListener(GetPosts);
             #endregion
         }
     }

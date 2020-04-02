@@ -17,6 +17,8 @@ public class MainMenuController : MonoBehaviour
     public GameObject publicTopicVibesBtn;
     public GameObject personalTopicVibesPanel;
     public GameObject personalTopicVibesBtn;
+    public GameObject postTopicVibeBtn;
+    public GameObject postTopicVibePanel;
     public GameObject testText;
 
     private void Start()
@@ -137,4 +139,17 @@ public class MainMenuController : MonoBehaviour
             personalTopicVibesPanel.SetActive(true);
         }
     }
+
+    /*public void TogglePostTopicVibesPanel()
+    {
+        if (postTopicVibePanel.activeSelf)
+            postTopicVibePanel.SetActive(false);
+        else if (!publicTopicVibesPanel.activeSelf) //other main menu panels will go here
+            postTopicVibePanel.SetActive(true);
+        else if (publicTopicVibesPanel.activeSelf)
+        {
+            TogglePublicTopicVibesPanel();
+            postTopicVibePanel.SetActive(true);
+        }
+    }*/
 }
