@@ -2,6 +2,8 @@
 
 ## Project Name: *Good Vibes*
 
+## License: Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) *https://creativecommons.org/licenses/by-nc-sa/4.0/* ![alt text](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png "Logo Title Text 1")
+
 ## Repo Link: *https://github.com/soft-eng-practicum/good-vibes*
 
 ## Platform Tool: Unity 2018.4.16f1 (Jan 27 release)
