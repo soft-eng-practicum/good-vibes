@@ -146,3 +146,7 @@ MonoBehaviour:
   passwordFieldLogin: {fileID: 0}
   loginBtn: {fileID: 0}
   refreshPublicTopicVibesBtn: {fileID: 0}
+  PersonalTopicBtn: {fileID: 8175800262917288043, guid: 2ddad822f94023f4caed4ef96bf745bf,
+    type: 3}
+  PersonalReplyMsg: {fileID: 8178248453037665958, guid: 34a5b7c85fb20c44da2244ef78920e93,
+    type: 3}

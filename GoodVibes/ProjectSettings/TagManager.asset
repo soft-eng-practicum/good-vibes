@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Topics
   - PublicTopicVibe
+  - PersonalTopics
   layers:
   - Default
   - TransparentFX

@@ -4,14 +4,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Security.Cryptography;
-//using DigiWar.Security.Cryptography;
 using CryptSharp;
-using CryptSharp.Utility;
-using System.Text;
 using UnityEngine.EventSystems;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 public class PlayerController : NetworkBehaviour
@@ -269,6 +263,7 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     public void RpcSendPublicVibesToClient(string webresult)
     {
+        Debug.Log("webresult/www.text: " + webresult);
         results = new List<string[]>();
         string[] text = webresult.Split('/');
         foreach (string res in text)
@@ -276,11 +271,12 @@ public class PlayerController : NetworkBehaviour
             string[] ree = res.Split(':');
             results.Add(ree);
         }
-
+        results.RemoveAt(results.Count - 1);
         //test.text = "";
         int topicIndex = 0;
         foreach (string[] data in results)
         {
+            Debug.Log("public data length: " + data.Length);
             for (int i = 0; i < 1; i++)
             {
                 //test.text += data[i];
@@ -379,6 +375,161 @@ public class PlayerController : NetworkBehaviour
     {
         messagesCanvas = GameObject.Find("TopicsCanvas").GetComponent<Canvas>();
         messagesCanvas.enabled = true;
+    }
+    #endregion
+
+    #region view personal topic vibes
+    List<string[]> personalResults;
+    GameObject personalTopics;
+    GameObject personalTopicVibesRepliesPanel;
+    public GameObject PersonalTopicBtn;
+    public GameObject PersonalReplyMsg;
+    List<string[]> topicVibeReplyResults;
+    GameObject personalTopicVibesRepliesScrollview;
+
+    public void RefreshPersonalTopicVibes()
+    {
+        CmdRefreshPersonalTopicVibes(clawmail);
+    }
+
+    [Command]
+    void CmdRefreshPersonalTopicVibes(string clawmail)
+    {
+        StartCoroutine(GetPersonalTopicVibes(clawmail));
+    }
+
+    IEnumerator GetPersonalTopicVibes(string clawmail)
+    {
+        Debug.Log("get personal topic vibes (www) coroutine started on server");
+        WWWForm form = new WWWForm();
+        form.AddField("clawmail", clawmail);
+        WWW www = new WWW("http://localhost/personaltopicvibes.php", form);
+        yield return www;
+        if (www.text != null && www.text != "")
+        {
+            RpcSendPersonalVibesToClient(www.text);
+        }
+        else
+            RpcSendPersonalVibesToClientFail("no results");
+    }
+
+    [ClientRpc]
+    public void RpcSendPersonalVibesToClient(string webresult)
+    {
+        Debug.Log("webresult/www.text: " + webresult);
+        personalResults = new List<string[]>();
+        string[] text = webresult.Split('/');
+        foreach (string res in text)
+        {
+            Debug.Log("res: " + res);
+
+            string[] ree = res.Split(':');
+            foreach (string str in ree)
+            {
+                Debug.Log("str: " + str);
+            }
+            personalResults.Add(ree);
+        }
+        personalResults.RemoveAt(personalResults.Count - 1);
+        //test.text = "";
+        //int topicIndex = 0;
+        foreach (string[] data in personalResults)
+        {
+            Debug.Log("data length: " + data.Length);
+            foreach (string s in data)
+            {
+                Debug.Log("field in row of data: " + s);
+            }
+            GameObject btn = Instantiate(PersonalTopicBtn, personalTopics.transform);
+            btn.transform.GetChild(0).GetComponent<Text>().text = data[1]; //subject
+            btn.GetComponent<Button>().onClick.AddListener(PersonalTopicClicked);
+            //topicIndex++;
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSendPersonalVibesToClientFail(string results)
+    {
+        test.text = "results";
+    }
+
+    void PersonalTopicClicked()
+    {
+        personalTopicVibesRepliesPanel.SetActive(true);
+        string subject = EventSystem.current.currentSelectedGameObject.transform.GetChild(0).GetComponent<Text>().text;
+        int idVibe = 0;
+        foreach (string[] data in personalResults)
+        {
+            if (data[1] == subject)
+                idVibe = int.Parse(data[4]);
+        }
+        CmdGetPersonalTopicVibeReplies(idVibe);
+    }
+
+    void ClosePersonalTopicVibesRepliesPanel()
+    {
+        personalTopicVibesRepliesPanel.SetActive(false);
+        foreach (Transform msg in personalTopicVibesRepliesScrollview.transform.GetComponent<Transform>())
+        {
+            Destroy(msg.gameObject);
+        }
+    }
+
+    [Command]
+    void CmdGetPersonalTopicVibeReplies(int idVibe)
+    {
+        StartCoroutine(GetPersonalTopicVibeReplies(idVibe));
+    }
+
+    IEnumerator GetPersonalTopicVibeReplies(int idVibe)
+    {
+        Debug.Log("get personal topic vibe replies (www) coroutine started on server");
+        WWWForm form = new WWWForm();
+        form.AddField("idVibe", idVibe);
+        WWW www = new WWW("http://localhost/personaltopicvibereplies.php", form);
+        yield return www;
+        if (www.text != null && www.text != "")
+        {
+            RpcSendPersonalTopicVibeRepliesToClient(www.text);
+        }
+        else
+            RpcSendPersonalTopicVibeRepliesToClientFail("no results");
+    }
+
+    [ClientRpc]
+    public void RpcSendPersonalTopicVibeRepliesToClient(string webresult)
+    {
+        Debug.Log("webresult/www.text: " + webresult);
+        topicVibeReplyResults = new List<string[]>();
+        string[] text = webresult.Split('/');
+        foreach (string res in text)
+        {
+            Debug.Log("res: " + res);
+
+            string[] ree = res.Split(':');
+            foreach (string str in ree)
+            {
+                Debug.Log("str: " + str);
+            }
+            topicVibeReplyResults.Add(ree);
+        }
+        topicVibeReplyResults.RemoveAt(topicVibeReplyResults.Count - 1);
+        foreach (string[] data in topicVibeReplyResults)
+        {
+            Debug.Log("data length: " + data.Length);
+            foreach (string s in data)
+            {
+                Debug.Log("field in row of data: " + s);
+            }
+            GameObject txt = Instantiate(PersonalReplyMsg, personalTopicVibesRepliesScrollview.transform);
+            txt.GetComponent<Text>().text = data[0] + "\n- " + data[1]; //subject
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSendPersonalTopicVibeRepliesToClientFail(string results)
+    {
+        Debug.Log(results);
     }
     #endregion
 
@@ -531,6 +682,14 @@ public class PlayerController : NetworkBehaviour
             {
                 button.GetComponent<Button>().onClick.AddListener(topicClicked);
             }
+            #endregion
+
+            #region personal topic vibes panel
+            personalTopics = GameObject.Find("PersonalTopics");
+            mmc.personalTopicVibesBtn.GetComponent<Button>().onClick.AddListener(RefreshPersonalTopicVibes);
+            personalTopicVibesRepliesPanel = GameObject.Find("PersonalTopicVibesRepliesPanel");
+            personalTopicVibesRepliesPanel.GetComponent<Button>().onClick.AddListener(ClosePersonalTopicVibesRepliesPanel);
+            personalTopicVibesRepliesScrollview = GameObject.Find("PersonalTopicVibesRepliesScrollview");
             #endregion
         }
     }

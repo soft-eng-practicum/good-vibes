@@ -15,6 +15,8 @@ public class MainMenuController : MonoBehaviour
     public GameObject mainMenuPanels;
     public GameObject publicTopicVibesPanel;
     public GameObject publicTopicVibesBtn;
+    public GameObject personalTopicVibesPanel;
+    public GameObject personalTopicVibesBtn;
     public GameObject testText;
 
     private void Start()
@@ -35,6 +37,18 @@ public class MainMenuController : MonoBehaviour
                 registerBtn.GetComponent<Image>().color = registerBtn.GetComponent<Button>().colors.pressedColor;
             else
                 registerBtn.GetComponent<Image>().color = registerBtn.GetComponent<Button>().colors.normalColor;
+        }
+        else if (mainMenuPanels.activeSelf)
+        {
+            if (publicTopicVibesPanel.activeSelf)
+                publicTopicVibesBtn.GetComponent<Image>().color = publicTopicVibesBtn.GetComponent<Button>().colors.pressedColor;
+            else
+                publicTopicVibesBtn.GetComponent<Image>().color = publicTopicVibesBtn.GetComponent<Button>().colors.normalColor;
+
+            if (personalTopicVibesPanel.activeSelf)
+                personalTopicVibesBtn.GetComponent<Image>().color = personalTopicVibesBtn.GetComponent<Button>().colors.pressedColor;
+            else
+                personalTopicVibesBtn.GetComponent<Image>().color = personalTopicVibesBtn.GetComponent<Button>().colors.normalColor;
         }
     }
 
@@ -94,18 +108,33 @@ public class MainMenuController : MonoBehaviour
     {
         mainMenuPanels.SetActive(true);
         mainMenuPanels.transform.GetChild(1).GetComponent<Text>().text = "Welcome, " + username + "!";
+        publicTopicVibesPanel.SetActive(false);
+        personalTopicVibesPanel.SetActive(false);
     }
 
     public void TogglePublicTopicVibesPanel()
     {
         if (publicTopicVibesPanel.activeSelf)
             publicTopicVibesPanel.SetActive(false);
-        else /*if (!registerPanel.activeSelf)*/ //other main menu panels will go here
+        else if (!personalTopicVibesPanel.activeSelf) //other main menu panels will go here
             publicTopicVibesPanel.SetActive(true);
-        /*else if (registerPanel.activeSelf)
+        else if (personalTopicVibesPanel.activeSelf)
         {
-            ToggleRegisterPanel();
-            SetLoginPanel(true);
-        }*/
+            TogglePersonalTopicVibesPanel();
+            publicTopicVibesPanel.SetActive(true);
+        }
+    }
+
+    public void TogglePersonalTopicVibesPanel()
+    {
+        if (personalTopicVibesPanel.activeSelf)
+            personalTopicVibesPanel.SetActive(false);
+        else if (!publicTopicVibesPanel.activeSelf) //other main menu panels will go here
+            personalTopicVibesPanel.SetActive(true);
+        else if (publicTopicVibesPanel.activeSelf)
+        {
+            TogglePublicTopicVibesPanel();
+            personalTopicVibesPanel.SetActive(true);
+        }
     }
 }
