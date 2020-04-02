@@ -51,6 +51,11 @@ public class MainMenuController : MonoBehaviour
                 personalTopicVibesBtn.GetComponent<Image>().color = personalTopicVibesBtn.GetComponent<Button>().colors.pressedColor;
             else
                 personalTopicVibesBtn.GetComponent<Image>().color = personalTopicVibesBtn.GetComponent<Button>().colors.normalColor;
+
+            if (postTopicVibePanel.activeSelf)
+                postTopicVibeBtn.GetComponent<Image>().color = postTopicVibeBtn.GetComponent<Button>().colors.pressedColor;
+            else
+                postTopicVibeBtn.GetComponent<Image>().color = postTopicVibeBtn.GetComponent<Button>().colors.normalColor;
         }
     }
 
@@ -112,17 +117,23 @@ public class MainMenuController : MonoBehaviour
         mainMenuPanels.transform.GetChild(1).GetComponent<Text>().text = "Welcome, " + username + "!";
         publicTopicVibesPanel.SetActive(false);
         personalTopicVibesPanel.SetActive(false);
+        postTopicVibePanel.SetActive(false);
     }
 
     public void TogglePublicTopicVibesPanel()
     {
         if (publicTopicVibesPanel.activeSelf)
             publicTopicVibesPanel.SetActive(false);
-        else if (!personalTopicVibesPanel.activeSelf) //other main menu panels will go here
+        else if (!personalTopicVibesPanel.activeSelf && !postTopicVibePanel.activeSelf) //other main menu panels will go here
             publicTopicVibesPanel.SetActive(true);
-        else if (personalTopicVibesPanel.activeSelf)
+        else if (personalTopicVibesPanel.activeSelf) 
         {
             TogglePersonalTopicVibesPanel();
+            publicTopicVibesPanel.SetActive(true);
+        }
+        else if (postTopicVibePanel.activeSelf)
+        {
+            TogglePostTopicVibesPanel();
             publicTopicVibesPanel.SetActive(true);
         }
     }
@@ -131,25 +142,35 @@ public class MainMenuController : MonoBehaviour
     {
         if (personalTopicVibesPanel.activeSelf)
             personalTopicVibesPanel.SetActive(false);
-        else if (!publicTopicVibesPanel.activeSelf) //other main menu panels will go here
+        else if (!publicTopicVibesPanel.activeSelf && !postTopicVibePanel.activeSelf) //other main menu panels (checking if false) will go here
             personalTopicVibesPanel.SetActive(true);
-        else if (publicTopicVibesPanel.activeSelf)
+        else if (publicTopicVibesPanel.activeSelf) 
         {
             TogglePublicTopicVibesPanel();
+            personalTopicVibesPanel.SetActive(true);
+        }
+        else if (postTopicVibePanel.activeSelf)
+        {
+            TogglePostTopicVibesPanel();
             personalTopicVibesPanel.SetActive(true);
         }
     }
 
-    /*public void TogglePostTopicVibesPanel()
+    public void TogglePostTopicVibesPanel()
     {
         if (postTopicVibePanel.activeSelf)
             postTopicVibePanel.SetActive(false);
-        else if (!publicTopicVibesPanel.activeSelf) //other main menu panels will go here
+        else if (!publicTopicVibesPanel.activeSelf && !personalTopicVibesPanel.activeSelf) //other main menu panels (checking if false) will go here
             postTopicVibePanel.SetActive(true);
-        else if (publicTopicVibesPanel.activeSelf)
+        else if (publicTopicVibesPanel.activeSelf) //add every other main menu panel to its own else if
         {
             TogglePublicTopicVibesPanel();
             postTopicVibePanel.SetActive(true);
         }
-    }*/
+        else if (personalTopicVibesPanel.activeSelf)
+        {
+            TogglePersonalTopicVibesPanel();
+            postTopicVibePanel.SetActive(true);
+        }
+    }
 }
