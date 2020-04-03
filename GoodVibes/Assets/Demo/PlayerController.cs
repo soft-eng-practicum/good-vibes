@@ -348,7 +348,14 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     void RpcShowUpdateTest(string update)
     {
+        StartCoroutine(ShowUpdateTest(update));
+    }
+
+    IEnumerator ShowUpdateTest(string update)
+    {
         updateMsg.GetComponent<Text>().text = "" + update;
+        yield return new WaitForSeconds(3);
+        updateMsg.GetComponent<Text>().text = "";
     }
 
     public void topicClicked()
@@ -453,6 +460,7 @@ public class PlayerController : NetworkBehaviour
             }
             GameObject btn = Instantiate(PersonalTopicBtn, personalTopics.transform);
             btn.transform.GetChild(0).GetComponent<Text>().text = data[1]; //subject
+            Debug.Log(data[2]);
             btn.GetComponent<Button>().onClick.AddListener(PersonalTopicClicked);
             //topicIndex++;
         }
@@ -595,7 +603,14 @@ public class PlayerController : NetworkBehaviour
     [ClientRpc]
     void RpcShowTopicUpdateTest(string update)
     {
+        StartCoroutine(PostTopicUpdate(update));
+    }
+
+    IEnumerator PostTopicUpdate(string update)
+    {
         topicUpdateMsg.GetComponent<Text>().text = "" + update;
+        yield return new WaitForSeconds(3);
+        topicUpdateMsg.GetComponent<Text>().text = "";
     }
     #endregion
 
