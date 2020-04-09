@@ -57,10 +57,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (isServer)
             Debug.Log("register submit pressed");
-        StartCoroutine(Register(clawmailField, hash, salt, userType));
+        StartCoroutine(Register(connectionToClient, clawmailField, hash, salt, userType));
     }
 
-    IEnumerator Register(string clawmailField, string hash, string salt, string userType)
+    IEnumerator Register(NetworkConnection target, string clawmailField, string hash, string salt, string userType)
     {
         Debug.Log("register (www) coroutine started on server");
         WWWForm form = new WWWForm();
@@ -74,18 +74,18 @@ public class PlayerController : NetworkBehaviour
         {
             string update = "User created successfully.";
             Debug.Log(update);
-            RpcShowRegistrationUpdate(update);
+            TargetShowRegistrationUpdate(target, update);
         }
         else
         {
             string update = "User creation failed. Error: " + www.text;
             Debug.Log(update);
-            RpcShowRegistrationUpdate(update);
+            TargetShowRegistrationUpdate(target, update);
         }
     }
 
-    [ClientRpc]
-    public void RpcShowRegistrationUpdate(string update)
+    [TargetRpc]
+    public void TargetShowRegistrationUpdate(NetworkConnection target, string update)
     {
         StartCoroutine(ShowRegistrationUpdate(update));
     }
@@ -164,10 +164,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (isServer)
             Debug.Log("login submit pressed");
-        StartCoroutine(Login(clawmailFieldLogin));
+        StartCoroutine(Login(connectionToClient, clawmailFieldLogin));
     }
 
-    IEnumerator Login(string clawmailFieldLogin)
+    IEnumerator Login(NetworkConnection target, string clawmailFieldLogin)
     {
         Debug.Log("login (www) coroutine started on server");
         WWWForm form = new WWWForm();
@@ -191,12 +191,12 @@ public class PlayerController : NetworkBehaviour
             string[] results = www.text.Split('/');
             string usersalt = results[1];
             string userhash = results[2];
-            RpcSendSaltToClient(usersalt, userhash);
+            TargetSendSaltToClient(target, usersalt, userhash);
         }
     }
 
-    [ClientRpc]
-    public void RpcSendSaltToClient(string usersalt, string userhash)
+    [TargetRpc]
+    public void TargetSendSaltToClient(NetworkConnection target, string usersalt, string userhash)
     {
         print("received usersalt: " + usersalt + ", received userhash: " + userhash);
         Debug.Log("client checking login credentials");
@@ -244,24 +244,24 @@ public class PlayerController : NetworkBehaviour
     [Command]
     void CmdRefreshPublicTopicVibes()
     {
-        StartCoroutine(GetPublicTopicVibes());
+        StartCoroutine(GetPublicTopicVibes(connectionToClient));
     }
 
-    IEnumerator GetPublicTopicVibes()
+    IEnumerator GetPublicTopicVibes(NetworkConnection target)
     {
         Debug.Log("get public topic vibes (www) coroutine started on server");
         WWW www = new WWW("http://localhost/publictopicvibes.php");
         yield return www;
         if (www.text != null && www.text != "")
         {
-            RpcSendPublicVibesToClient(www.text);
+            TargetSendPublicVibesToClient(target, www.text);
         }
         else
-            RpcSendPublicVibesToClientFail("no results");
+            TargetSendPublicVibesToClientFail(target, "no results");
     }
 
-    [ClientRpc]
-    public void RpcSendPublicVibesToClient(string webresult)
+    [TargetRpc]
+    public void TargetSendPublicVibesToClient(NetworkConnection target, string webresult)
     {
         Debug.Log("webresult/www.text: " + webresult);
         results = new List<string[]>();
@@ -285,8 +285,8 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcSendPublicVibesToClientFail(string results)
+    [TargetRpc]
+    public void TargetSendPublicVibesToClientFail(NetworkConnection target, string results)
     {
         test.text = "results";
     }
@@ -317,10 +317,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (isServer)
             Debug.Log("post reply has been pressed");
-        StartCoroutine(Reply(replyField, clawmail, messageID));
+        StartCoroutine(Reply(connectionToClient, replyField, clawmail, messageID));
     }
 
-    IEnumerator Reply(string replyField, string clawmail, int messageID)
+    IEnumerator Reply(NetworkConnection target, string replyField, string clawmail, int messageID)
     {
         Debug.Log("post reply to topic vibe (www) coroutine started on server");
         WWWForm replyForm = new WWWForm();
@@ -334,19 +334,19 @@ public class PlayerController : NetworkBehaviour
         {
             string update = "reply added successfully.";
             Debug.Log(update);
-            RpcShowUpdateTest(update);
+            TargetShowUpdateTest(target, update);
         }
         else
         {
             string update = "reply not added: " + www.text;
             Debug.Log(update);
-            RpcShowUpdateTest(update);
+            TargetShowUpdateTest(target, update);
         }
         //Debug.Log("Server connected to DB");
     }
 
-    [ClientRpc]
-    void RpcShowUpdateTest(string update)
+    [TargetRpc]
+    void TargetShowUpdateTest(NetworkConnection target, string update)
     {
         StartCoroutine(ShowUpdateTest(update));
     }
@@ -413,10 +413,10 @@ public class PlayerController : NetworkBehaviour
     [Command]
     void CmdRefreshPersonalTopicVibes(string clawmail)
     {
-        StartCoroutine(GetPersonalTopicVibes(clawmail));
+        StartCoroutine(GetPersonalTopicVibes(connectionToClient, clawmail));
     }
 
-    IEnumerator GetPersonalTopicVibes(string clawmail)
+    IEnumerator GetPersonalTopicVibes(NetworkConnection target, string clawmail)
     {
         Debug.Log("get personal topic vibes (www) coroutine started on server");
         WWWForm form = new WWWForm();
@@ -425,14 +425,14 @@ public class PlayerController : NetworkBehaviour
         yield return www;
         if (www.text != null && www.text != "")
         {
-            RpcSendPersonalVibesToClient(www.text);
+            TargetSendPersonalVibesToClient(target, www.text);
         }
         else
-            RpcSendPersonalVibesToClientFail("no results");
+            TargetSendPersonalVibesToClientFail(target, "no results");
     }
 
-    [ClientRpc]
-    public void RpcSendPersonalVibesToClient(string webresult)
+    [TargetRpc]
+    public void TargetSendPersonalVibesToClient(NetworkConnection target, string webresult)
     {
         Debug.Log("webresult/www.text: " + webresult);
         personalResults = new List<string[]>();
@@ -466,8 +466,8 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcSendPersonalVibesToClientFail(string results)
+    [TargetRpc]
+    public void TargetSendPersonalVibesToClientFail(NetworkConnection target, string results)
     {
         test.text = results;
     }
@@ -497,10 +497,10 @@ public class PlayerController : NetworkBehaviour
     [Command]
     void CmdGetPersonalTopicVibeReplies(int idVibe)
     {
-        StartCoroutine(GetPersonalTopicVibeReplies(idVibe));
+        StartCoroutine(GetPersonalTopicVibeReplies(connectionToClient, idVibe));
     }
 
-    IEnumerator GetPersonalTopicVibeReplies(int idVibe)
+    IEnumerator GetPersonalTopicVibeReplies(NetworkConnection target, int idVibe)
     {
         Debug.Log("get personal topic vibe replies (www) coroutine started on server");
         WWWForm form = new WWWForm();
@@ -509,14 +509,14 @@ public class PlayerController : NetworkBehaviour
         yield return www;
         if (www.text != null && www.text != "")
         {
-            RpcSendPersonalTopicVibeRepliesToClient(www.text);
+            TargetSendPersonalTopicVibeRepliesToClient(target, www.text);
         }
         else
-            RpcSendPersonalTopicVibeRepliesToClientFail("no results");
+            TargetSendPersonalTopicVibeRepliesToClientFail(target, "no results");
     }
 
-    [ClientRpc]
-    public void RpcSendPersonalTopicVibeRepliesToClient(string webresult)
+    [TargetRpc]
+    public void TargetSendPersonalTopicVibeRepliesToClient(NetworkConnection target, string webresult)
     {
         Debug.Log("webresult/www.text: " + webresult);
         topicVibeReplyResults = new List<string[]>();
@@ -554,8 +554,8 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
-    public void RpcSendPersonalTopicVibeRepliesToClientFail(string results)
+    [TargetRpc]
+    public void TargetSendPersonalTopicVibeRepliesToClientFail(NetworkConnection target, string results)
     {
         Debug.Log(results);
     }
@@ -578,10 +578,10 @@ public class PlayerController : NetworkBehaviour
     {
         if (isServer)
             Debug.Log("post topic vibe has been pressed");
-        StartCoroutine(Topic(topicField, subjectField, clawmail));
+        StartCoroutine(Topic(connectionToClient, topicField, subjectField, clawmail));
     }
 
-    IEnumerator Topic(string topicField, string subjectField, string clawmail)
+    IEnumerator Topic(NetworkConnection target, string topicField, string subjectField, string clawmail)
     {
         Debug.Log("post reply to topic vibe (www) coroutine started on server");
         WWWForm topicReply = new WWWForm();
@@ -595,13 +595,13 @@ public class PlayerController : NetworkBehaviour
         {
             string update = "topic vibe added successfully.";
             Debug.Log(update);
-            RpcShowTopicUpdateTest(update);
+            TargetShowTopicUpdateTest(target, update);
         }
         //Debug.Log("Server connected to DB");
     }
 
-    [ClientRpc]
-    void RpcShowTopicUpdateTest(string update)
+    [TargetRpc]
+    void TargetShowTopicUpdateTest(NetworkConnection target, string update)
     {
         StartCoroutine(PostTopicUpdate(update));
     }
@@ -793,23 +793,23 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void CmdAskLoadConnectingScene() //test to see if messages get passed between server<-->client and scene changes on server
     {
-        RpcClientLoadConnectingScene();
+        TargetClientLoadConnectingScene(connectionToClient);
     }
 
     [Command]
     public void CmdAskLoadMainMenuScene()
     {
-        RpcClientLoadMainMenuScene();
+        TargetClientLoadMainMenuScene(connectionToClient);
     }
 
-    [ClientRpc]
-    public void RpcClientLoadConnectingScene()
+    [TargetRpc]
+    public void TargetClientLoadConnectingScene(NetworkConnection target)
     {
         SceneManager.LoadScene("Connecting");
     }
 
-    [ClientRpc]
-    public void RpcClientLoadMainMenuScene()
+    [TargetRpc]
+    public void TargetClientLoadMainMenuScene(NetworkConnection target)
     {
         StartCoroutine(ClientConnected());
     }
@@ -834,7 +834,7 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region demo
-    [Command]
+    /*[Command]
     public void CmdPostMessage(string s)
     {
         db.addMsg(s);
@@ -870,6 +870,6 @@ public class PlayerController : NetworkBehaviour
         {
             postPanel.text += posts[i] + "\n";
         }
-    }
+    }*/
     #endregion
 }
