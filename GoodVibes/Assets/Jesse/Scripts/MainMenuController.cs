@@ -6,6 +6,9 @@ using UnityEngine.Networking;
 
 public class MainMenuController : MonoBehaviour
 {
+    PlayerController localPlayer;
+    //NetworkConnection localNC;
+
     public GameObject loginRegisterPanels;
     public GameObject loginPanel;
     public GameObject loginBtn;
@@ -59,6 +62,11 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    public void SetLocalPlayer(PlayerController set)
+    {
+        localPlayer = set;
+    }
+
     void OpenLoginRegisterPanels()
     {
         loginRegisterPanels.SetActive(true);
@@ -109,6 +117,11 @@ public class MainMenuController : MonoBehaviour
     void SetLoginPanel(bool set)
     {
         loginPanel.SetActive(set);
+    }
+
+    public void VerifyInputs()
+    {
+        localPlayer.VerifyInputs();
     }
 
     public void OpenMainMenuOptions(string username)

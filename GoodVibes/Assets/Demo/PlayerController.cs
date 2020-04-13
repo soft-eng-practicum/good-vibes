@@ -144,7 +144,7 @@ public class PlayerController : NetworkBehaviour
             if (clawmailFieldLogin.text.Contains("@ggc.edu"))
                 clawmailFieldLogin.text.Remove((clawmailFieldLogin.text.IndexOf('@') + 7));
 
-            loginBtn.interactable = (clawmailFieldLogin.text.Contains("@ggc.edu") && !clawmailFieldLogin.text.Substring(0, 1).Equals("@"));
+            loginBtn.interactable = (clawmailFieldLogin.text.Contains("@ggc.edu") && !clawmailFieldLogin.text.Substring(0, 1).Equals("@") && passwordFieldLogin .text.Length >= 1);
         }
     }
     #endregion
@@ -188,7 +188,7 @@ public class PlayerController : NetworkBehaviour
         }*/
         if (www.text.Contains("0"))
         {
-            string[] results = www.text.Split('/');
+            string[] results = www.text.Split('+');
             string usersalt = results[1];
             string userhash = results[2];
             TargetSendSaltToClient(target, usersalt, userhash);
@@ -265,7 +265,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         results = new List<string[]>();
-        string[] text = webresult.Split('/');
+        string[] text = webresult.Split('+');
         foreach (string res in text)
         {
             string[] ree = res.Split(':');
@@ -436,7 +436,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         personalResults = new List<string[]>();
-        string[] text = webresult.Split('/');
+        string[] text = webresult.Split('+');
         foreach (string res in text)
         {
             Debug.Log("res: " + res);
@@ -520,7 +520,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         topicVibeReplyResults = new List<string[]>();
-        string[] text = webresult.Split('/');
+        string[] text = webresult.Split('+');
         foreach (string res in text)
         {
             Debug.Log("res: " + res);
@@ -661,6 +661,7 @@ public class PlayerController : NetworkBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu") //doesn't get called
         {
             Screen.orientation = ScreenOrientation.Portrait;
+            gameObject.name = "LocalPlayer";
         }
     }
     private void Update()
@@ -673,12 +674,13 @@ public class PlayerController : NetworkBehaviour
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             mmc = GameObject.Find("MainMenu").GetComponent<MainMenuController>();
+            mmc.SetLocalPlayer(this);
 
             msgHint = GameObject.Find("ErrorMsg").GetComponent<Text>().text;
 
             #region register panel 
             clawmailField = GameObject.Find("RegisterClawmailField").GetComponent<InputField>();
-            EventTrigger eventTrigger = clawmailField.GetComponent<EventTrigger>();
+            /*EventTrigger eventTrigger = clawmailField.GetComponent<EventTrigger>();
             EventTrigger.Entry entry = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.Select,
@@ -687,10 +689,10 @@ public class PlayerController : NetworkBehaviour
             UnityEngine.Events.UnityAction<BaseEventData> callback =
             new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
             entry.callback.AddListener(callback);
-            eventTrigger.triggers.Add(entry);
+            eventTrigger.triggers.Add(entry);*/
 
             passwordField = GameObject.Find("RegisterPasswordField").GetComponent<InputField>();
-            EventTrigger eventTrigger2 = passwordField.GetComponent<EventTrigger>();
+            /*EventTrigger eventTrigger2 = passwordField.GetComponent<EventTrigger>();
             EventTrigger.Entry entry2 = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.Select,
@@ -699,7 +701,7 @@ public class PlayerController : NetworkBehaviour
             UnityEngine.Events.UnityAction<BaseEventData> callback2 =
             new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
             entry2.callback.AddListener(callback2);
-            eventTrigger2.triggers.Add(entry2);
+            eventTrigger2.triggers.Add(entry2);*/
 
             userType = GameObject.Find("RegisterUserType").GetComponent<Dropdown>();
 
@@ -709,7 +711,7 @@ public class PlayerController : NetworkBehaviour
 
             #region login panel
             clawmailFieldLogin = GameObject.Find("LoginClawmailField").GetComponent<InputField>();
-            EventTrigger eventTrigger3 = clawmailFieldLogin.GetComponent<EventTrigger>();
+            /*EventTrigger eventTrigger3 = clawmailFieldLogin.GetComponent<EventTrigger>();
             EventTrigger.Entry entry3 = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.Select,
@@ -718,10 +720,10 @@ public class PlayerController : NetworkBehaviour
             UnityEngine.Events.UnityAction<BaseEventData> callback3 =
             new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
             entry3.callback.AddListener(callback3);
-            eventTrigger3.triggers.Add(entry3);
+            eventTrigger3.triggers.Add(entry3);*/
 
             passwordFieldLogin = GameObject.Find("LoginPasswordField").GetComponent<InputField>();
-            EventTrigger eventTrigger4 = passwordFieldLogin.GetComponent<EventTrigger>();
+            /*EventTrigger eventTrigger4 = passwordFieldLogin.GetComponent<EventTrigger>();
             EventTrigger.Entry entry4 = new EventTrigger.Entry
             {
                 eventID = EventTriggerType.Select,
@@ -730,7 +732,7 @@ public class PlayerController : NetworkBehaviour
             UnityEngine.Events.UnityAction<BaseEventData> callback4 =
             new UnityEngine.Events.UnityAction<BaseEventData>(SelectEventMethod);
             entry4.callback.AddListener(callback4);
-            eventTrigger4.triggers.Add(entry4);
+            eventTrigger4.triggers.Add(entry4);*/
 
             loginBtn = GameObject.Find("SubmitLogin").GetComponent<Button>();
             loginBtn.onClick.AddListener(CallLogin);
