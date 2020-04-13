@@ -191,12 +191,13 @@ public class PlayerController : NetworkBehaviour
             string[] results = www.text.Split('+');
             string usersalt = results[1];
             string userhash = results[2];
-            TargetSendSaltToClient(target, usersalt, userhash);
+            string userlegal = results[3];
+            TargetSendSaltToClient(target, usersalt, userhash, userlegal);
         }
     }
 
     [TargetRpc]
-    public void TargetSendSaltToClient(NetworkConnection target, string usersalt, string userhash)
+    public void TargetSendSaltToClient(NetworkConnection target, string usersalt, string userhash, string userlegal)
     {
         print("received usersalt: " + usersalt + ", received userhash: " + userhash);
         Debug.Log("client checking login credentials");
@@ -204,14 +205,14 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.Log("correct credentials");
             clawmail = clawmailFieldLogin.text;
-            StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true));
+            StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true, userlegal));
         }
         else
-            StartCoroutine(ShowLoginUpdate("Credentials mismatch :(", false));
+            StartCoroutine(ShowLoginUpdate("Credentials mismatch :(", false, ""));
         Debug.Log("rehash: " + Crypter.Blowfish.Crypt(passwordField.text, usersalt) + ", userhash: " + userhash);
     }
 
-    IEnumerator ShowLoginUpdate(string update, bool check)
+    IEnumerator ShowLoginUpdate(string update, bool check, string userlegal)
     {
         if (check)
         {
@@ -221,12 +222,16 @@ public class PlayerController : NetworkBehaviour
             //deactivate login/register panel and show main menu stuff
             mmc.CloseLoginRegisterPanels();
             mmc.OpenMainMenuOptions(clawmail);
+            Debug.Log("userlegal: " + userlegal);
+            if (userlegal == "no")
+                mmc.OpenLegalAgreementPanel();
         }
         else
         {
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
             yield return new WaitForSeconds(10f);
-            GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+            if (GameObject.Find("ErrorMsg") != null)
+                GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
         }
     }
     #endregion
@@ -611,6 +616,36 @@ public class PlayerController : NetworkBehaviour
         topicUpdateMsg.GetComponent<Text>().text = "" + update;
         yield return new WaitForSeconds(3);
         topicUpdateMsg.GetComponent<Text>().text = "";
+    }
+    #endregion
+
+    #region legal agreement
+    public void Agree()
+    {
+        CmdAgree(clawmail);
+    }
+
+    [Command]
+    void CmdAgree(string clawmail)
+    {
+        if (isServer)
+            Debug.Log("agree to legal stuff has been pressed");
+        StartCoroutine(AgreeToLegal(connectionToClient, clawmail));
+    }
+
+    IEnumerator AgreeToLegal(NetworkConnection target, string clawmail)
+    {
+        Debug.Log("agree to legal (www) coroutine started on server");
+        WWWForm legalForm = new WWWForm();
+        legalForm.AddField("clawmail", clawmail);
+        WWW www = new WWW("http://localhost/legal.php", legalForm);
+        yield return www;
+
+        if (www.text == "0") //no errors
+        {
+            string update = "agreement status updated.";
+            Debug.Log(update);
+        }
     }
     #endregion
 

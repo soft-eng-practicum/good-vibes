@@ -22,11 +22,16 @@ public class MainMenuController : MonoBehaviour
     public GameObject personalTopicVibesBtn;
     public GameObject postTopicVibeBtn;
     public GameObject postTopicVibePanel;
+    public GameObject legalAgreementPanel;
+    public GameObject legalAgreementBtn;
+    public GameObject legalAgreementSb;
     public GameObject testText;
+    bool checkAgreement;
 
     private void Start()
     {
         OpenLoginRegisterPanels();
+        checkAgreement = false;
     }
 
     private void Update()
@@ -59,6 +64,15 @@ public class MainMenuController : MonoBehaviour
                 postTopicVibeBtn.GetComponent<Image>().color = postTopicVibeBtn.GetComponent<Button>().colors.pressedColor;
             else
                 postTopicVibeBtn.GetComponent<Image>().color = postTopicVibeBtn.GetComponent<Button>().colors.normalColor;
+        }
+
+        if (checkAgreement)
+        {
+            if (legalAgreementSb.GetComponent<Scrollbar>().value == 0)
+            {
+                legalAgreementBtn.GetComponent<Button>().interactable = true;
+                checkAgreement = false;
+            }
         }
     }
 
@@ -131,6 +145,7 @@ public class MainMenuController : MonoBehaviour
         publicTopicVibesPanel.SetActive(false);
         personalTopicVibesPanel.SetActive(false);
         postTopicVibePanel.SetActive(false);
+        legalAgreementPanel.SetActive(false);
     }
 
     public void TogglePublicTopicVibesPanel()
@@ -185,5 +200,19 @@ public class MainMenuController : MonoBehaviour
             TogglePersonalTopicVibesPanel();
             postTopicVibePanel.SetActive(true);
         }
+    }
+
+    public void OpenLegalAgreementPanel()
+    {
+        print("openlegal");
+        legalAgreementPanel.SetActive(true);
+        legalAgreementBtn.GetComponent<Button>().interactable = false;
+        checkAgreement = true;
+    }
+
+    public void Agree()
+    {
+        legalAgreementPanel.SetActive(false);
+        localPlayer.Agree();
     }
 }
