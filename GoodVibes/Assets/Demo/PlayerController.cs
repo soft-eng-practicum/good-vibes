@@ -316,11 +316,19 @@ public class PlayerController : NetworkBehaviour
     private GameObject getPosts;
     private GameObject updateMsg;
     private GameObject[] topics;
+    public WordFilter wf;
     int msgID;
 
     public void postReply()
     {
-        CmdPostReply(inputField.text, clawmail, msgID);
+        if (wf.checkWords())
+        {
+            CmdPostReply(inputField.text, clawmail, msgID);
+        }
+        else
+        {
+            StartCoroutine(ShowUpdateTest("not very cash munny of u"));
+        }
     }
 
     [Command]
@@ -385,6 +393,7 @@ public class PlayerController : NetworkBehaviour
         Debug.Log("tc" + scrollView.activeInHierarchy);
         string txt = GameObject.Find(button).GetComponentInChildren<Text>().text;
         topic.text = txt;
+
         foreach (string[] data in results)
         {
             if (data[0] == topic.text)
