@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.EventSystems;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -25,8 +26,18 @@ public class MainMenuController : MonoBehaviour
     public GameObject legalAgreementPanel;
     public GameObject legalAgreementBtn;
     public GameObject legalAgreementSb;
+
     public GameObject testText;
     bool checkAgreement;
+
+    public InputField replyInputField;
+    public InputField sendTopicSubjectInputField;
+    public InputField sendTopicMessageInputField;
+    public InputField loginClawmailField;
+    public InputField loginPasswordField;
+    public InputField registerClawmailField;
+    public InputField registerPasswordField;
+    public Dropdown userType;
 
     private void Start()
     {
@@ -186,6 +197,7 @@ public class MainMenuController : MonoBehaviour
 
     public void TogglePostTopicVibesPanel()
     {
+        //ClearInput();
         if (postTopicVibePanel.activeSelf)
             postTopicVibePanel.SetActive(false);
         else if (!publicTopicVibesPanel.activeSelf && !personalTopicVibesPanel.activeSelf) //other main menu panels (checking if false) will go here
@@ -214,5 +226,35 @@ public class MainMenuController : MonoBehaviour
     {
         legalAgreementPanel.SetActive(false);
         localPlayer.Agree();
+    }
+
+    public void ClearInput()
+    {
+        if (EventSystem.current.currentSelectedGameObject.name == "SubmitLogin" || EventSystem.current.currentSelectedGameObject.name == "LoginPanelBtn")
+        {
+            loginClawmailField.text = "";
+            loginPasswordField.text = "";
+        }
+        else if (EventSystem.current.currentSelectedGameObject.name == "SubmitRegister" || EventSystem.current.currentSelectedGameObject.name == "RegisterPanelBtn")
+        {
+            registerClawmailField.text = "";
+            registerPasswordField.text = "";
+            userType.value = 0;
+        }
+        else if (EventSystem.current.currentSelectedGameObject.name == "PostMsg" || EventSystem.current.currentSelectedGameObject.name == "GetPosts")
+            replyInputField.text = "";
+        else if (EventSystem.current.currentSelectedGameObject.name == "PostTopicMsg" || EventSystem.current.currentSelectedGameObject.name == "PostTopicVibePanelBtn")
+        {
+            sendTopicMessageInputField.text = "";
+            sendTopicSubjectInputField.text = "";
+        }
+    }
+
+    public void VerifyLength()
+    {
+        if (GameObject.Find("ReplyCanvas") != null && GameObject.Find("ReplyCanvas").activeSelf == true)
+            GameObject.Find("PostMsg").GetComponent<Button>().interactable = (replyInputField.text.Length > 0);
+        if (postTopicVibePanel.activeSelf == true)
+            GameObject.Find("PostTopicMsg").GetComponent<Button>().interactable = (sendTopicMessageInputField.text.Length > 0 && sendTopicSubjectInputField.text.Length > 0);
     }
 }

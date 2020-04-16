@@ -92,6 +92,8 @@ public class PlayerController : NetworkBehaviour
 
     IEnumerator ShowRegistrationUpdate(string update)
     {
+        if (update.Contains("success"))
+            mmc.ClearInput();
         GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
         yield return new WaitForSeconds(10f);
         GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
@@ -188,7 +190,7 @@ public class PlayerController : NetworkBehaviour
         }*/
         if (www.text.Contains("0"))
         {
-            string[] results = www.text.Split('+');
+            string[] results = www.text.Split('ツ');
             string usersalt = results[1];
             string userhash = results[2];
             string userlegal = results[3];
@@ -205,6 +207,7 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.Log("correct credentials");
             clawmail = clawmailFieldLogin.text;
+            mmc.ClearInput();
             StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true, userlegal));
         }
         else
@@ -243,19 +246,21 @@ public class PlayerController : NetworkBehaviour
 
     public void RefreshPublicTopicVibes()
     {
-        CmdRefreshPublicTopicVibes();
+        CmdRefreshPublicTopicVibes(clawmail);
     }
 
     [Command]
-    void CmdRefreshPublicTopicVibes()
+    void CmdRefreshPublicTopicVibes(string clawmail)
     {
-        StartCoroutine(GetPublicTopicVibes(connectionToClient));
+        StartCoroutine(GetPublicTopicVibes(connectionToClient, clawmail));
     }
 
-    IEnumerator GetPublicTopicVibes(NetworkConnection target)
+    IEnumerator GetPublicTopicVibes(NetworkConnection target, string clawmail)
     {
         Debug.Log("get public topic vibes (www) coroutine started on server");
-        WWW www = new WWW("http://localhost/publictopicvibes.php");
+        WWWForm form = new WWWForm();
+        form.AddField("clawmail", clawmail);
+        WWW www = new WWW("http://localhost/publictopicvibes.php", form);
         yield return www;
         if (www.text != null && www.text != "")
         {
@@ -270,7 +275,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         results = new List<string[]>();
-        string[] text = webresult.Split('+');
+        string[] text = webresult.Split('ツ');
         foreach (string res in text)
         {
             string[] ree = res.Split(':');
@@ -282,7 +287,7 @@ public class PlayerController : NetworkBehaviour
         foreach (string[] data in results)
         {
             Debug.Log("public data length: " + data.Length);
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 1 && topicIndex < 10; i++)
             {
                 topics[topicIndex].transform.GetChild(0).GetComponent<Text>().text = data[i];
                 topicIndex++;
@@ -293,19 +298,20 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     public void TargetSendPublicVibesToClientFail(NetworkConnection target, string results)
     {
-        test.text = "results";
+        test.text = "no results";
     }
     #endregion
 
     #region reply to topic vibe
     private Text topic;
+    private Text message;
     private InputField inputField;
     private GameObject inputs;
     private GameObject scrollView;
     private Button postReplyMsg;
     private string button;
-    private Canvas replyCanvas;
-    private Canvas messagesCanvas;
+    private GameObject replyCanvas;
+    private GameObject messagesCanvas;
     private GameObject playerPrefab;
     private GameObject getPosts;
     private GameObject updateMsg;
@@ -358,6 +364,8 @@ public class PlayerController : NetworkBehaviour
 
     IEnumerator ShowUpdateTest(string update)
     {
+        if (update.Contains("success"))
+            mmc.ClearInput();
         updateMsg.GetComponent<Text>().text = "" + update;
         yield return new WaitForSeconds(3);
         updateMsg.GetComponent<Text>().text = "";
@@ -365,10 +373,12 @@ public class PlayerController : NetworkBehaviour
 
     public void topicClicked()
     {
-        refreshPublicTopicVibesBtn.enabled = false;
-        replyCanvas = GameObject.Find("ReplyCanvas").GetComponent<Canvas>();
-        replyCanvas.enabled = true;
-        topic = GameObject.Find("topic").GetComponent<Text>();
+        print("topic clicked");
+        refreshPublicTopicVibesBtn.gameObject.SetActive(false);
+        //replyCanvas = GameObject.Find("ReplyCanvas");
+        replyCanvas.SetActive(true);
+        topic = GameObject.Find("subject").GetComponent<Text>();
+        message = GameObject.Find("message").GetComponent<Text>();
         scrollView = GameObject.Find("Scroll View");
         button = EventSystem.current.currentSelectedGameObject.name;
         Debug.Log(button);
@@ -378,22 +388,26 @@ public class PlayerController : NetworkBehaviour
         foreach (string[] data in results)
         {
             if (data[0] == topic.text)
+            {
+                message.text = data[1];
                 msgID = int.Parse(data[2]);
+            }
         }
         scrollView.SetActive(false);
     }
 
     void GetPosts()
     {
-        refreshPublicTopicVibesBtn.enabled = true;
-        replyCanvas.enabled = false;
+        print("go back to posts");
+        refreshPublicTopicVibesBtn.gameObject.SetActive(true);
+        replyCanvas.SetActive(false);
         scrollView.SetActive(true);
     }
 
     public void displayMessagesCanvas()
     {
-        messagesCanvas = GameObject.Find("TopicsCanvas").GetComponent<Canvas>();
-        messagesCanvas.enabled = true;
+        //messagesCanvas = GameObject.Find("TopicsCanvas");
+        messagesCanvas.SetActive(true);
     }
     #endregion
 
@@ -405,6 +419,8 @@ public class PlayerController : NetworkBehaviour
     public GameObject PersonalReplyMsg;
     List<string[]> topicVibeReplyResults;
     GameObject personalTopicVibesRepliesScrollview;
+    Text personalsubject;
+    Text personalmessage;
 
     public void RefreshPersonalTopicVibes()
     {
@@ -441,7 +457,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         personalResults = new List<string[]>();
-        string[] text = webresult.Split('+');
+        string[] text = webresult.Split('ツ');
         foreach (string res in text)
         {
             Debug.Log("res: " + res);
@@ -482,10 +498,16 @@ public class PlayerController : NetworkBehaviour
         personalTopicVibesRepliesPanel.SetActive(true);
         string subject = EventSystem.current.currentSelectedGameObject.transform.GetChild(0).GetComponent<Text>().text;
         int idVibe = 0;
+        personalsubject = GameObject.Find("personalsubject").GetComponent<Text>();
+        personalmessage = GameObject.Find("personalmessage").GetComponent<Text>();
         foreach (string[] data in personalResults)
         {
             if (data[1] == subject)
+            {
+                personalsubject.text = subject;
+                personalmessage.text = data[2];
                 idVibe = int.Parse(data[4]);
+            }
         }
         CmdGetPersonalTopicVibeReplies(idVibe);
     }
@@ -525,7 +547,7 @@ public class PlayerController : NetworkBehaviour
     {
         Debug.Log("webresult/www.text: " + webresult);
         topicVibeReplyResults = new List<string[]>();
-        string[] text = webresult.Split('+');
+        string[] text = webresult.Split('ツ');
         foreach (string res in text)
         {
             Debug.Log("res: " + res);
@@ -567,7 +589,7 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     #region send topic vibe
-    private Canvas topicCanvas;
+    private GameObject topicCanvas;
     private InputField topicInputField;
     private InputField subjectInputField;
     private GameObject topicUpdateMsg;
@@ -613,6 +635,7 @@ public class PlayerController : NetworkBehaviour
 
     IEnumerator PostTopicUpdate(string update)
     {
+        mmc.ClearInput();
         topicUpdateMsg.GetComponent<Text>().text = "" + update;
         yield return new WaitForSeconds(3);
         topicUpdateMsg.GetComponent<Text>().text = "";
@@ -772,7 +795,7 @@ public class PlayerController : NetworkBehaviour
             loginBtn = GameObject.Find("SubmitLogin").GetComponent<Button>();
             loginBtn.onClick.AddListener(CallLogin);
             #endregion
-
+            
             #region public topic vibes panel
             test = mmc.testText.GetComponent<Text>();
             refreshPublicTopicVibesBtn = GameObject.Find("PublicTopicVibesRefreshBtn").GetComponent<Button>();
@@ -781,19 +804,19 @@ public class PlayerController : NetworkBehaviour
             #endregion
 
             #region reply to public topic vibes panel
-            replyCanvas = GameObject.Find("ReplyCanvas").GetComponent<Canvas>();
-            messagesCanvas = GameObject.Find("TopicsCanvas").GetComponent<Canvas>();
+            replyCanvas = GameObject.Find("ReplyCanvas");
+            messagesCanvas = GameObject.Find("TopicsCanvas");
             postReplyMsg = GameObject.Find("PostMsg").GetComponent<Button>();
             inputs = GameObject.Find("reply");
-            topic = GameObject.Find("topic").GetComponent<Text>();
+            topic = GameObject.Find("subject").GetComponent<Text>();
+            message = GameObject.Find("message").GetComponent<Text>();
             inputField = GameObject.Find("ReplyInputField").GetComponent<InputField>();
             scrollView = GameObject.Find("Scroll View");
             updateMsg = GameObject.Find("UpdateMsg");
             topics = GameObject.FindGameObjectsWithTag("Topics");
 
             //inputs.SetActive(false);
-            messagesCanvas.enabled = false;
-            replyCanvas.enabled = false;
+            
 
             postReplyMsg.onClick.AddListener(postReply);
             postReplyMsg.onClick.AddListener(GetPosts);
@@ -815,13 +838,17 @@ public class PlayerController : NetworkBehaviour
             #endregion
 
             #region send topic vibes panel
-            topicCanvas = GameObject.Find("SendTopicCanvas").GetComponent<Canvas>();
+            topicCanvas = GameObject.Find("SendTopicCanvas");
             topicInputField = GameObject.Find("SendTopicMessageInputField").GetComponent<InputField>();
             subjectInputField = GameObject.Find("SendTopicSubjectInputField").GetComponent<InputField>();
             topicUpdateMsg = GameObject.Find("SendTopicUpdateMsg");
             postTopicMsg = GameObject.Find("PostTopicMsg").GetComponent<Button>();
 
             postTopicMsg.GetComponent<Button>().onClick.AddListener(postTopic);
+
+            //from replies
+            messagesCanvas.SetActive(false);
+            replyCanvas.SetActive(false);
             #endregion
         }
     }
