@@ -23,6 +23,7 @@ public class PlayerController : NetworkBehaviour
 
     string msgHint;
     protected string clawmail;
+    public WordFilter wf;
 
     MainMenuController mmc;
 
@@ -316,12 +317,12 @@ public class PlayerController : NetworkBehaviour
     private GameObject getPosts;
     private GameObject updateMsg;
     private GameObject[] topics;
-    public WordFilter wf;
+    
     int msgID;
 
     public void postReply()
     {
-        if (wf.checkWords())
+        if (wf.checkWords(inputField))
         {
             CmdPostReply(inputField.text, clawmail, msgID);
         }
@@ -606,7 +607,15 @@ public class PlayerController : NetworkBehaviour
 
     public void postTopic()
     {
-        CmdPostTopic(topicInputField.text, subjectInputField.text, clawmail);
+        if (wf.checkWords(topicInputField) && wf.checkWords(subjectInputField))
+        {
+            CmdPostTopic(topicInputField.text, subjectInputField.text, clawmail);
+        }
+        else
+        {
+            StartCoroutine(PostTopicUpdate("not very cash munny of u"));
+        }
+
     }
 
     [Command]
