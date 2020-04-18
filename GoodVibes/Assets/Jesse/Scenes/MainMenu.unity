@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465782, g: 0.49641252, b: 0.5748167, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1447,8 +1447,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -21.925, y: -1345.1503}
-  m_SizeDelta: {x: 1022, y: 4312}
+  m_AnchoredPosition: {x: -21.925, y: -2220.6}
+  m_SizeDelta: {x: 1022, y: 6063}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &386449701
 MonoBehaviour:
@@ -1481,53 +1481,46 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Lorem ipsum dolan sit amet, consectetur adipiscing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Orci eu lobortis elementum
-    nibh tellus molestie. Natoque penatibus et magnis dis. Pretium fusce id velit
-    ut tortor pretium viverra suspendisse. Porta lorem mollis aliquam ut porttitor.
-    Ut etiam sit amet nisl purus in mollis nunc. Mattis molestie a iaculis at erat
-    pellentesque. Viverra aliquet eget sit amet tellus. Ultrices mi tempus imperdiet
-    nulla malesuada pellentesque elit eget gravida. Laoreet non curabitur gravida
-    arcu. Enim sit amet venenatis urna cursus eget nunc scelerisque. Interdum varius
-    sit amet mattis vulputate enim nulla aliquet. Fames ac turpis egestas sed tempus
-    urna et. Vulputate sapien nec sagittis aliquam malesuada bibendum arcu. Est ultricies
-    integer quis auctor elit sed. Donec et odio pellentesque diam volutpat. Gravida
-    neque convallis a cras semper auctor neque vitae tempus. Vestibulum rhoncus est
-    pellentesque elit ullamcorper dignissim cras.\r\n\r\nPellentesque id nibh tortor
-    id aliquet. Pellentesque pulvinar pellentesque habitant morbi tristique senectus
-    et netus. Malesuada bibendum arcu vitae elementum curabitur. Placerat in egestas
-    erat imperdiet sed euismod. Aliquam vestibulum morbi blandit cursus risus at ultrices
-    mi. Faucibus purus in massa tempor nec feugiat nisl. Iaculis urna id volutpat
-    lacus laoreet non. Pellentesque habitant morbi tristique senectus et. Nec feugiat
-    nisl pretium fusce id velit ut tortor pretium. Nunc lobortis mattis aliquam faucibus
-    purus in massa. Vestibulum lorem sed risus ultricies tristique nulla aliquet enim.
-    Ipsum nunc aliquet bibendum enim facilisis.\r\n\r\nEget nullam non nisi est sit
-    amet. Vitae congue eu consequat ac. Tortor pretium viverra suspendisse potenti
-    nullam. Condimentum mattis pellentesque id nibh tortor. Interdum velit laoreet
-    id donec. Ut lectus arcu bibendum at varius. Eget nullam non nisi est sit. Ipsum
-    suspendisse ultrices gravida dictum fusce ut placerat orci. Sit amet cursus sit
-    amet dictum. Consectetur purus ut faucibus pulvinar elementum integer enim neque.
-    Eget aliquet nibh praesent tristique magna sit amet. Neque convallis a cras semper.
-    Tempus imperdiet nulla malesuada pellentesque elit eget. Aliquet sagittis id consectetur
-    purus ut faucibus pulvinar.\r\n\r\nFelis donec et odio pellentesque diam. Vitae
-    tortor condimentum lacinia quis vel eros donec ac. Cursus turpis massa tincidunt
-    dui ut. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. In hac habitasse
-    platea dictumst vestibulum rhoncus est pellentesque. Sit amet facilisis magna
-    etiam tempor. Et ligula ullamcorper malesuada proin libero nunc. Dui vivamus arcu
-    felis bibendum. Morbi tristique senectus et netus et malesuada fames ac turpis.
-    Sem viverra aliquet eget sit amet tellus cras. Facilisi etiam dignissim diam quis
-    enim lobortis scelerisque fermentum dui. Amet massa vitae tortor condimentum lacinia
-    quis.\r\n\r\nPellentesque elit eget gravida cum sociis natoque penatibus et. Ut
-    etiam sit amet nisl purus. Id faucibus nisl tincidunt eget nullam non. Pellentesque
-    eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Ipsum dolor sit
-    amet consectetur adipiscing elit. Morbi leo urna molestie at elementum eu facilisis
-    sed. Enim eu turpis egestas pretium aenean pharetra magna ac. Dolor sit amet consectetur
-    adipiscing. Phasellus faucibus scelerisque eleifend donec pretium vulputate. Malesuada
-    fames ac turpis egestas sed tempus. Ultricies leo integer malesuada nunc. Id consectetur
-    purus ut faucibus pulvinar elementum integer enim. Amet venenatis urna cursus
-    eget nunc scelerisque viverra. Lectus sit amet est placerat in egestas erat imperdiet.
-    At consectetur lorem donec massa sapien faucibus et molestie. Consectetur a erat
-    nam at lectus."
+  m_Text: "Rules:\n\n\u2022\tThe goal of the Good Vibes app is to foster positive
+    and helpful vibes in the GGC community, so please be respectful\r\n\u2022\tDo
+    not post information that can lead to exposing a person\u2019s anonymity\r\n\nPrivacy
+    Policy\r:\n\nEffective Date:  4/20/2020\r\n\r\nWe collect certain information
+    through our application, located at https://github.com/soft-eng-practicum/good-vibes
+    (our \u201CApplication\u201D), including through the products and services provided
+    in the Application.  This page (this \u201CPrivacy Policy\u201D) lays out our
+    policies and procedures surrounding the collection and handling of any such information
+    that identifies an individual user or that could be used to contact or locate
+    him or her (\u201CPersonal Identifiable Information\u201D or \u201CPII\u201D).\r\nThis
+    Privacy Policy applies only to our Application and to the products and services
+    provided through our Application.  It does not apply to any third-party site or
+    service linked to our Application or recommended or referred by our Application,
+    through our products or services, or by our staff.  And it does not apply to any
+    other application, product, or service operated by our company, or to any of our
+    offline activities.\r\n\r\nA.  PII We Collect\r\nWe collect the following Personally
+    Identifiable Information from users who buy our products or services: e-mail.\r\nWe
+    also save \u201Cvibes\u201D or messages made by all users. These messages contain
+    information created by the user, and as such may contain private information.\r\n\r\nB.
+    Our use of PII\r\nWe use your Personally Identifiable Information to create your
+    account. We also use the information to the extent necessary to enforce our Application
+    terms of service and to prevent imminent harm to persons or property.\r\n\r\nC.
+    \ Protection of PII\r\nWe employ the following data security tools to protect
+    Personally Identifiable Information: Security features via Unity, UNet, and PHPMyAdmin.
+    Unfortunately, even with these measures, we cannot guarantee the security of PII.
+    \ By using our Application, you acknowledged and agree that we make no such guarantee,
+    and that you use our Application at your own risk.\r\n\r\nD.  Contractor and Other
+    Third-Party Access to PII\r\nWe disclose PII to attorneys, collection agencies,
+    or law enforcement authorities to address potential AUP violations, other contract
+    violations, or illegal behavior.  And we disclose any information demanded in
+    a court order or otherwise required by law or to prevent imminent harm to persons
+    or property.  Finally, we may share PII in connection with corporate transaction,
+    like a merger or sale of our company, or sale of all or substantially all of our
+    assets or of the product or service line you received from us, or a bankruptcy.\r\n\r\nE.
+    \ Accessing and Correcting Your PII\r\nYou can request a change to any Personally
+    Identifiable Information by contacting us.\r\n\r\nF.  Amendment of This Privacy
+    Policy\r\nWe may change this Privacy Policy at any time by posting a new version
+    on this page or on a successor page.  The new version will become effective on
+    the date it\u2019s posted, which will be listed at the top of the page as the
+    new \u201CEffective Date.\u201D \r"
 --- !u!222 &386449702
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1824,7 +1817,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 251}
+  m_AnchoredPosition: {x: 0, y: 802}
   m_SizeDelta: {x: 1068.5, y: 114.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &430579281
@@ -3965,8 +3958,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2065997981}
   m_HandleRect: {fileID: 2065997980}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.37608996
+  m_Value: 0.99998873
+  m_Size: 0.26747483
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4074,7 +4067,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'User Agreement
+  m_Text: 'User Agreements
 
     Please review the following!'
 --- !u!222 &1157555589
@@ -4321,7 +4314,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.012444, y: 741.4}
+  m_AnchoredPosition: {x: 0.012444, y: 418}
   m_SizeDelta: {x: 1080, y: 442.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1215168037
@@ -4357,7 +4350,8 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "\u2022\tClawmail must include '@ggc.edu' and have at least 1 character
     before the '@'\r\n\u2022\tPassword must be at least 8 characters long\r\n\u2022\tUser
-    Type must be selected when registering\r\n"
+    Type must be selected when registering\r\n\u2022\tAll new users must agree to
+    our terms and rules upon creating a new account"
 --- !u!222 &1215168038
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6107,7 +6101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 463}
+  m_AnchoredPosition: {x: 0, y: 1014}
   m_SizeDelta: {x: 789.9, y: 114.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1723627488
@@ -6406,8 +6400,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1226615305}
   m_HandleRect: {fileID: 1226615304}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7148,7 +7142,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1651104692}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10711,8 +10705,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3978187096088507105}
   m_HandleRect: {fileID: 3978187096088507104}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.99999994
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10984,7 +10978,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3978187096019552321}
   m_HandleRect: {fileID: 3978187096019552320}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11197,7 +11191,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000015275184}
+  m_AnchoredPosition: {x: 0, y: 0.00000629954}
   m_SizeDelta: {x: 0, y: 302}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &3978187097408818394
@@ -11348,7 +11342,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030484787}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3978187097438398168
@@ -11856,18 +11850,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4961000671655107374}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 110443362}
-        m_MethodName: TogglePostTopicVibesPanel
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &4961000671655107379
 GameObject:
   m_ObjectHideFlags: 0

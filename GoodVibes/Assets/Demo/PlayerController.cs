@@ -610,6 +610,7 @@ public class PlayerController : NetworkBehaviour
         if (wf.checkWords(topicInputField) && wf.checkWords(subjectInputField))
         {
             CmdPostTopic(topicInputField.text, subjectInputField.text, clawmail);
+            mmc.TogglePostTopicVibesPanel();
         }
         else
         {
