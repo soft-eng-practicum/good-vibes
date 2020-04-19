@@ -175,6 +175,11 @@ public class MainMenuController : MonoBehaviour
             TogglePostTopicVibesPanel();
             publicTopicVibesPanel.SetActive(true);
         }
+
+        if (localPlayer.reportCanvas.activeSelf)
+        {
+            localPlayer.hideReport();
+        }
     }
 
     public void TogglePersonalTopicVibesPanel()
@@ -192,6 +197,11 @@ public class MainMenuController : MonoBehaviour
         {
             TogglePostTopicVibesPanel();
             personalTopicVibesPanel.SetActive(true);
+        }
+
+        if (localPlayer.reportCanvas.activeSelf)
+        {
+            localPlayer.hideReport();
         }
     }
 
@@ -211,6 +221,11 @@ public class MainMenuController : MonoBehaviour
         {
             TogglePersonalTopicVibesPanel();
             postTopicVibePanel.SetActive(true);
+        }
+
+        if (localPlayer.reportCanvas.activeSelf)
+        {
+            localPlayer.hideReport();
         }
     }
 
@@ -257,4 +272,11 @@ public class MainMenuController : MonoBehaviour
         if (postTopicVibePanel.activeSelf == true)
             GameObject.Find("PostTopicMsg").GetComponent<Button>().interactable = (sendTopicMessageInputField.text.Length > 0 && sendTopicSubjectInputField.text.Length > 0);
     }
+
+    public void VerifyReportSelection()
+    {
+        GameObject.Find("SendReport").GetComponent<Button>().interactable = (GameObject.Find("ReportCategory").GetComponent<Dropdown>().value != 0);
+    }
+
+
 }

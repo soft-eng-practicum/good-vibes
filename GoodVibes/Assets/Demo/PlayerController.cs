@@ -195,12 +195,13 @@ public class PlayerController : NetworkBehaviour
             string usersalt = results[1];
             string userhash = results[2];
             string userlegal = results[3];
-            TargetSendSaltToClient(target, usersalt, userhash, userlegal);
+            string isBanned = results[4];
+            TargetSendSaltToClient(target, usersalt, userhash, userlegal, isBanned);
         }
     }
 
     [TargetRpc]
-    public void TargetSendSaltToClient(NetworkConnection target, string usersalt, string userhash, string userlegal)
+    public void TargetSendSaltToClient(NetworkConnection target, string usersalt, string userhash, string userlegal, string isBanned)
     {
         print("received usersalt: " + usersalt + ", received userhash: " + userhash);
         Debug.Log("client checking login credentials");
@@ -209,7 +210,12 @@ public class PlayerController : NetworkBehaviour
             Debug.Log("correct credentials");
             clawmail = clawmailFieldLogin.text;
             mmc.ClearInput();
-            StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true, userlegal));
+            if (isBanned.Contains("yes"))
+            {
+                StartCoroutine(ShowLoginUpdate("Account banned for bad vibes.", false, ""));
+            }
+            else
+                StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true, userlegal));
         }
         else
             StartCoroutine(ShowLoginUpdate("Credentials mismatch :(", false, ""));
@@ -431,6 +437,7 @@ public class PlayerController : NetworkBehaviour
     GameObject personalTopicVibesRepliesScrollview;
     Text personalsubject;
     Text personalmessage;
+    int idVibe;
 
     public void RefreshPersonalTopicVibes()
     {
@@ -507,7 +514,7 @@ public class PlayerController : NetworkBehaviour
     {
         personalTopicVibesRepliesPanel.SetActive(true);
         string subject = EventSystem.current.currentSelectedGameObject.transform.GetChild(0).GetComponent<Text>().text;
-        int idVibe = 0;
+        idVibe = 0;
         personalsubject = GameObject.Find("personalsubject").GetComponent<Text>();
         personalmessage = GameObject.Find("personalmessage").GetComponent<Text>();
         foreach (string[] data in personalResults)
@@ -517,6 +524,7 @@ public class PlayerController : NetworkBehaviour
                 personalsubject.text = subject;
                 personalmessage.text = data[2];
                 idVibe = int.Parse(data[4]);
+                msgID = int.Parse(data[4]);
             }
         }
         CmdGetPersonalTopicVibeReplies(idVibe);
@@ -588,6 +596,21 @@ public class PlayerController : NetworkBehaviour
                 Debug.Log("scrollview is still null");
             GameObject txt = Instantiate(PersonalReplyMsg, personalTopicVibesRepliesScrollview.transform);
             txt.GetComponent<Text>().text = data[0] + "\n- " + data[1]; //subject
+            txt.GetComponent<Button>().onClick.AddListener(showReport);
+            txt.GetComponent<Button>().onClick.AddListener(SetMsgID);
+        }
+    }
+
+    void SetMsgID()
+    {
+        print("current obj: " + EventSystem.current.currentSelectedGameObject.name);
+        foreach (string[] data in topicVibeReplyResults)
+        {
+            if (EventSystem.current.currentSelectedGameObject.GetComponent<Text>().text.Contains(data[0]))
+            {
+                msgID = int.Parse(data[2]);
+                print("msgID: " + msgID);
+            }
         }
     }
 
@@ -693,45 +716,107 @@ public class PlayerController : NetworkBehaviour
 
     #region ManualReport
 
-    private GameObject reportCanvas;
+    public GameObject reportCanvas;
     private Button sendReportBtn;
     private Button reporting;
+    private Button closeReportBtn;
+    public Dropdown reportCategory;
+    private int openCanvas; //canvases
+    private GameObject personalTopicVibesPanel;
 
     public void sendReport()
     {
-        CmdReport(clawmail, msgID);
+        CmdReport(clawmail, msgID, reportCategory.transform.GetChild(0).GetComponent<Text>().text);
     }
 
     [Command]
-    public void CmdReport(string clawmail, int messageID)
+    public void CmdReport(string clawmail, int messageID, string reportCategory)
     {
         if (isServer)
-            Debug.Log("post reply has been pressed");
-        StartCoroutine(Report(clawmail, messageID));
+            Debug.Log("send report has been pressed");
+        StartCoroutine(Report(connectionToClient, clawmail, messageID, reportCategory));
     }
 
-    IEnumerator Report(string clawmail, int messageID)
+    IEnumerator Report(NetworkConnection target, string clawmail, int messageID, string reportCategory)
     {
         Debug.Log("report topic or reply vibe (www) coroutine started on server");
         WWWForm reportForm = new WWWForm();
         reportForm.AddField("clawmail", clawmail);
         reportForm.AddField("messageID", messageID);
+        reportForm.AddField("reportCategory", reportCategory);
         WWW www = new WWW("http://localhost/report.php", reportForm);
         yield return www;
+        TargetShowReportUpdate(target, www.text);
+    }
 
-        hideReport();
+   [TargetRpc]
+   void TargetShowReportUpdate(NetworkConnection target, string result)
+    {
+        StartCoroutine(ShowReportUpdate(result));
+    }
 
+    IEnumerator ShowReportUpdate(string result)
+    {
+        print("report results: " + result);
+        print("openCanvas: " + openCanvas);
+        if (result.Contains("0"))
+        {
+            hideReport();
+            if (openCanvas == 3)
+            {
+                //ClosePersonalTopicVibesRepliesPanel();
+                foreach (Transform msg in personalTopicVibesRepliesScrollview.transform.GetComponent<Transform>())
+                {
+                    Destroy(msg.gameObject);
+                }
+                CmdGetPersonalTopicVibeReplies(idVibe);
+            }
+            updateMsg.GetComponent<Text>().text = "Vibe reported successfully.";
+            yield return new WaitForSeconds(3);
+            updateMsg.GetComponent<Text>().text = "";
+        }
+        else
+        {
+            updateMsg.GetComponent<Text>().text = "Error reporting vibe.";
+            yield return new WaitForSeconds(3);
+            updateMsg.GetComponent<Text>().text = "";
+        }
     }
 
     public void hideReport()
     {
+        reportCategory.value = 0;
         reportCanvas.SetActive(false);
+        if (openCanvas == 1)
+            replyCanvas.SetActive(true);
+        else if (openCanvas == 2)
+            GameObject.Find("PostTopicVibePanel").SetActive(true);
+        else if (openCanvas == 3)
+            personalTopicVibesPanel.SetActive(true);
+
     }
 
     public void showReport()
     {
         reportCanvas.SetActive(true);
-        replyCanvas.SetActive(false);
+        personalTopicVibesPanel = GameObject.Find("PersonalTopicVibesRepliesPanel");
+        if (GameObject.Find("PublicTopicVibesPanel") != null && GameObject.Find("PublicTopicVibesPanel").activeSelf)
+        {
+            openCanvas = 1;
+            replyCanvas.SetActive(false);
+        }
+        else if (GameObject.Find("PostTopicVibePanel") != null && GameObject.Find("PostTopicVibePanel").activeSelf)
+        {
+            openCanvas = 2;
+            GameObject.Find("PostTopicVibePanel").SetActive(false);
+        }
+        else if (personalTopicVibesPanel != null && GameObject.Find("PersonalTopicVibesRepliesPanel").activeSelf)
+        {
+            openCanvas = 3;
+            personalTopicVibesPanel.SetActive(false);
+            print("personal replies panel disappeared");
+        }
+
     }
     #endregion
 
@@ -887,6 +972,9 @@ public class PlayerController : NetworkBehaviour
             {
                 button.GetComponent<Button>().onClick.AddListener(topicClicked);
             }
+
+            reporting = GameObject.Find("Reportbtn").GetComponent<Button>();
+            reporting.onClick.AddListener(showReport);
             #endregion
 
             #region personal topic vibes panel
@@ -917,10 +1005,14 @@ public class PlayerController : NetworkBehaviour
             #region reporting
             reportCanvas = GameObject.Find("ReportCanvas");
             sendReportBtn = GameObject.Find("SendReport").GetComponent<Button>();
-            reporting = GameObject.Find("Reportbtn").GetComponent<Button>();
+            reportCategory = GameObject.Find("ReportCategory").GetComponent<Dropdown>();
+            closeReportBtn = GameObject.Find("CloseReport").GetComponent<Button>();
+            personalTopicVibesPanel = GameObject.Find("PersonalTopicVibesRepliesPanel");
 
             sendReportBtn.onClick.AddListener(sendReport);
-            reporting.onClick.AddListener(showReport);
+            closeReportBtn.onClick.AddListener(hideReport);
+            reportCategory.value = 0;
+            reportCanvas.SetActive(false);
             #endregion
         }
     }
