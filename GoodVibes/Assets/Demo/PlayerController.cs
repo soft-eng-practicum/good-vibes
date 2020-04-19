@@ -691,6 +691,50 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
+    #region ManualReport
+
+    private GameObject reportCanvas;
+    private Button sendReportBtn;
+    private Button reporting;
+
+    public void sendReport()
+    {
+        CmdReport(clawmail, msgID);
+    }
+
+    [Command]
+    public void CmdReport(string clawmail, int messageID)
+    {
+        if (isServer)
+            Debug.Log("post reply has been pressed");
+        StartCoroutine(Report(clawmail, messageID));
+    }
+
+    IEnumerator Report(string clawmail, int messageID)
+    {
+        Debug.Log("report topic or reply vibe (www) coroutine started on server");
+        WWWForm reportForm = new WWWForm();
+        reportForm.AddField("clawmail", clawmail);
+        reportForm.AddField("messageID", messageID);
+        WWW www = new WWW("http://localhost/report.php", reportForm);
+        yield return www;
+
+        hideReport();
+
+    }
+
+    public void hideReport()
+    {
+        reportCanvas.SetActive(false);
+    }
+
+    public void showReport()
+    {
+        reportCanvas.SetActive(true);
+        replyCanvas.SetActive(false);
+    }
+    #endregion
+
     private void Awake()
     {
         print("player instantiated in " + SceneManager.GetActiveScene().name);
@@ -868,6 +912,15 @@ public class PlayerController : NetworkBehaviour
             //from replies
             messagesCanvas.SetActive(false);
             replyCanvas.SetActive(false);
+            #endregion
+
+            #region reporting
+            reportCanvas = GameObject.Find("ReportCanvas");
+            sendReportBtn = GameObject.Find("SendReport").GetComponent<Button>();
+            reporting = GameObject.Find("Reportbtn").GetComponent<Button>();
+
+            sendReportBtn.onClick.AddListener(sendReport);
+            reporting.onClick.AddListener(showReport);
             #endregion
         }
     }

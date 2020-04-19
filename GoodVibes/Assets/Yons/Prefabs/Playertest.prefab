@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7092736444637949082}
   - component: {fileID: 7092736444637949086}
   - component: {fileID: 3217089972511303891}
-  - component: {fileID: 7598906593303434414}
+  - component: {fileID: 8369310630027591679}
   m_Layer: 0
   m_Name: Playertest
   m_TagString: Untagged
@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00ac355f5627e7a439e4d725b1657a95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wf: {fileID: 0}
   clawmailField: {fileID: 0}
   passwordField: {fileID: 0}
   userType: {fileID: 0}
@@ -147,7 +148,9 @@ MonoBehaviour:
   passwordFieldLogin: {fileID: 0}
   loginBtn: {fileID: 0}
   refreshPublicTopicVibesBtn: {fileID: 0}
---- !u!114 &7598906593303434414
+  PersonalTopicBtn: {fileID: 0}
+  PersonalReplyMsg: {fileID: 0}
+--- !u!114 &8369310630027591679
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,14 +159,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7092736444637949083}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55d0614c521e39b45a6f097a1f25a32a, type: 3}
+  m_Script: {fileID: 11500000, guid: 001a7320543161e47b1645895cd69079, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clawmailField: {fileID: 0}
-  passwordField: {fileID: 0}
-  userType: {fileID: 0}
-  registerBtn: {fileID: 0}
-  clawmailFieldLogin: {fileID: 0}
-  passwordFieldLogin: {fileID: 0}
-  loginBtn: {fileID: 0}
-  refreshPublicTopicVibesBtn: {fileID: 0}
