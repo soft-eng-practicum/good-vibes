@@ -445,7 +445,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -98}
-  m_SizeDelta: {x: 1080, y: 340.68}
+  m_SizeDelta: {x: 1080, y: 710.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1400451569
 MonoBehaviour:
@@ -478,13 +478,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Disconnected! :(
-
-    Is your Wifi/Data connection on?
-
-    Is your connection stable?
-
-    Is your connection fast enough?'
+  m_Text: "Disconnected! :(\nIs your Wifi/Data connection on?\nIs your connection
+    stable?\nIs your connection fast enough?\nIf you're having trouble, try turning
+    the app off and on again.\nThe server might also be down. \nPlease wait patiently."
 --- !u!222 &1400451570
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -529,7 +525,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 0}
+  m_BackGroundColor: {r: 0.043137256, g: 0.4862745, b: 0.7372549, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}

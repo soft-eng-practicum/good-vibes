@@ -20,7 +20,7 @@ public class WordFilter : MonoBehaviour
                 print(s);
                 foreach (string ss in badWords)
                 {
-                    if (s.Contains(ss))
+                    if (s.Equals(ss))
                     {
                         print("not very cash munny of u");
                         return false;

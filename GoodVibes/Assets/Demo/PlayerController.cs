@@ -19,7 +19,7 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
     Text connecting;
-    int timeLeft;
+    float timeLeft;
 
     string msgHint;
     protected string clawmail;
@@ -80,7 +80,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
-            string update = "User creation failed. Error: " + www.text;
+            string update = "User creation failed. Please try again. " + www.text;
             Debug.Log(update);
             TargetShowRegistrationUpdate(target, update);
         }
@@ -342,7 +342,7 @@ public class PlayerController : NetworkBehaviour
 
     IEnumerator SendPublicVibesToClientFail(string results)
     {
-        test.text = "no results";
+        test.text = ""; //"no results";
         yield return new WaitForSeconds(3f);
         test.text = "";
     }
@@ -926,8 +926,10 @@ public class PlayerController : NetworkBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //if (SceneManager.GetActiveScene().name == "Connecting")
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
+            start = false;
             mmc = GameObject.Find("MainMenu").GetComponent<MainMenuController>();
             mmc.SetLocalPlayer(this);
 
@@ -1068,6 +1070,10 @@ public class PlayerController : NetworkBehaviour
     }
 
     #region client startup
+    GameObject loadingBar;
+    bool start;
+    bool moving;
+
     [Command]
     public void CmdAskLoadConnectingScene() //test to see if messages get passed between server<-->client and scene changes on server
     {
@@ -1089,6 +1095,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     public void TargetClientLoadMainMenuScene(NetworkConnection target)
     {
+        start = false;
         StartCoroutine(ClientConnected());
     }
 
@@ -1098,8 +1105,14 @@ public class PlayerController : NetworkBehaviour
         {
             print("timeLeft: " + timeLeft);
             connecting.text = "Connected! Login screen will show up in " + timeLeft + " seconds";
+            loadingBar = GameObject.Find("ThoughtBubbleLoaderBar");
+            moving = false;
+            if (!start)
+                MoveLoadingBar();
             yield return new WaitForSeconds(1);
             timeLeft--;
+            if (timeLeft < 1)
+                connecting.text = ":D";
             if (timeLeft == 0)
             {
                 SceneManager.LoadScene("MainMenu");
@@ -1107,6 +1120,23 @@ public class PlayerController : NetworkBehaviour
             }
             else
                 StartCoroutine(ClientConnected());
+        }
+    }
+
+    void MoveLoadingBar()
+    {
+        start = true;
+        StartCoroutine(MoveBar());
+    }
+
+    IEnumerator MoveBar()
+    {
+        while (start && !moving)
+        {
+            moving = true;
+            loadingBar.transform.position += Vector3.up * 0.1f;
+            yield return new WaitForSeconds(0.005f);
+            moving = false;
         }
     }
     #endregion

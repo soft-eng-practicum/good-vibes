@@ -245,12 +245,12 @@ public class MainMenuController : MonoBehaviour
 
     public void ClearInput()
     {
-        if (EventSystem.current.currentSelectedGameObject.name == "SubmitLogin" || EventSystem.current.currentSelectedGameObject.name == "LoginPanelBtn")
+        if (/*EventSystem.current.currentSelectedGameObject.name == "SubmitLogin" || */EventSystem.current.currentSelectedGameObject.name == "LoginPanelBtn")
         {
             loginClawmailField.text = "";
             loginPasswordField.text = "";
         }
-        else if (EventSystem.current.currentSelectedGameObject.name == "SubmitRegister" || EventSystem.current.currentSelectedGameObject.name == "RegisterPanelBtn")
+        else if (/*EventSystem.current.currentSelectedGameObject.name == "SubmitRegister" || */EventSystem.current.currentSelectedGameObject.name == "RegisterPanelBtn")
         {
             registerClawmailField.text = "";
             registerPasswordField.text = "";
