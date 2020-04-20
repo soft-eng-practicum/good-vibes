@@ -44,6 +44,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] InputField passwordField;
     [SerializeField] Dropdown userType;
     [SerializeField] Button registerBtn;
+    bool newUser;
 
     private string salt;
     private string hash;
@@ -94,10 +95,19 @@ public class PlayerController : NetworkBehaviour
     IEnumerator ShowRegistrationUpdate(string update)
     {
         if (update.Contains("success"))
-            mmc.ClearInput();
-        GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
-        yield return new WaitForSeconds(10f);
-        GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+        {
+            clawmailFieldLogin.text = clawmailField.text;
+            passwordFieldLogin.text = passwordField.text;
+            newUser = true;
+            CallLogin();
+            //mmc.ClearInput();
+        }
+        else
+        {
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
+            yield return new WaitForSeconds(4f);
+            GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
+        }
     }
 
     public void VerifyInputs()
@@ -214,8 +224,10 @@ public class PlayerController : NetworkBehaviour
             {
                 StartCoroutine(ShowLoginUpdate("Account banned for bad vibes.", false, ""));
             }
-            else
+            else if (!newUser)
                 StartCoroutine(ShowLoginUpdate("Thanks for logging in, " + clawmail + "! Opening main menu...", true, userlegal));
+            else if (newUser)
+                StartCoroutine(ShowLoginUpdate("Thanks for creating an account, " + clawmail + "! Logging you in...", true, userlegal));
         }
         else
             StartCoroutine(ShowLoginUpdate("Credentials mismatch :(", false, ""));
@@ -227,7 +239,10 @@ public class PlayerController : NetworkBehaviour
         if (check)
         {
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
-            yield return new WaitForSeconds(3f);
+            if (!newUser)
+                yield return new WaitForSeconds(2f);
+            else
+                yield return new WaitForSeconds(5f);
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
             //deactivate login/register panel and show main menu stuff
             mmc.CloseLoginRegisterPanels();
@@ -239,8 +254,8 @@ public class PlayerController : NetworkBehaviour
         else
         {
             GameObject.Find("ErrorMsg").GetComponent<Text>().text = update;
-            yield return new WaitForSeconds(10f);
-            if (GameObject.Find("ErrorMsg") != null)
+            yield return new WaitForSeconds(4f);
+            if (GameObject.Find("ErrorMsg") != null && !newUser)
                 GameObject.Find("ErrorMsg").GetComponent<Text>().text = msgHint;
         }
     }
@@ -298,6 +313,7 @@ public class PlayerController : NetworkBehaviour
         //test.text = "";
         //int topicIndex = 0;
         int positionsArrayIndex = 0;
+        test.text = "";
         foreach (string[] data in results)
         {
             Debug.Log("public data length: " + data.Length);
@@ -358,7 +374,7 @@ public class PlayerController : NetworkBehaviour
         }
         else
         {
-            StartCoroutine(ShowUpdateTest("not very cash munny of u"));
+            StartCoroutine(ShowUpdateTest("No mean vibes here."));
         }
     }
 
@@ -946,6 +962,7 @@ public class PlayerController : NetworkBehaviour
 
             registerBtn = GameObject.Find("SubmitRegister").GetComponent<Button>();
             registerBtn.onClick.AddListener(CallRegister);
+            newUser = false;
             #endregion
 
             #region login panel
