@@ -250,10 +250,16 @@ public class PlayerController : NetworkBehaviour
     Text test;
     [SerializeField] Button refreshPublicTopicVibesBtn;
     List<string[]> results;
+    public GameObject thoughtBubble;
+    public Vector3[] positions;
 
     public void RefreshPublicTopicVibes()
     {
         CmdRefreshPublicTopicVibes(clawmail);
+        foreach (Transform msg in scrollView.transform.GetComponent<Transform>())
+        {
+            Destroy(msg.gameObject);
+        }
     }
 
     [Command]
@@ -290,14 +296,24 @@ public class PlayerController : NetworkBehaviour
         }
         results.RemoveAt(results.Count - 1);
         //test.text = "";
-        int topicIndex = 0;
+        //int topicIndex = 0;
+        int positionsArrayIndex = 0;
         foreach (string[] data in results)
         {
             Debug.Log("public data length: " + data.Length);
-            for (int i = 0; i < 1 && topicIndex < 10; i++)
+            /*for (int i = 0; i < 1 && topicIndex < 10; i++)
             {
                 topics[topicIndex].transform.GetChild(0).GetComponent<Text>().text = data[i];
                 topicIndex++;
+            }*/
+            if (positionsArrayIndex < 9)
+            {
+                GameObject btn = Instantiate(thoughtBubble, scrollView.transform);
+                btn.name += "" + positionsArrayIndex;
+                btn.transform.localPosition = positions[positionsArrayIndex];
+                btn.transform.GetChild(0).GetComponent<Text>().text = data[0]; //subject
+                btn.GetComponent<Button>().onClick.AddListener(topicClicked);
+                positionsArrayIndex++;
             }
         }
     }
@@ -305,7 +321,14 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     public void TargetSendPublicVibesToClientFail(NetworkConnection target, string results)
     {
+        SendPublicVibesToClientFail(results);
+    }
+
+    IEnumerator SendPublicVibesToClientFail(string results)
+    {
         test.text = "no results";
+        yield return new WaitForSeconds(3f);
+        test.text = "";
     }
     #endregion
 
@@ -323,6 +346,7 @@ public class PlayerController : NetworkBehaviour
     private GameObject getPosts;
     private GameObject updateMsg;
     private GameObject[] topics;
+    private GameObject reportedVibe;
     
     int msgID;
 
@@ -396,8 +420,11 @@ public class PlayerController : NetworkBehaviour
         message = GameObject.Find("message").GetComponent<Text>();
         scrollView = GameObject.Find("Scroll View");
         button = EventSystem.current.currentSelectedGameObject.name;
-        Debug.Log(button);
-        Debug.Log("tc" + scrollView.activeInHierarchy);
+        reportedVibe = EventSystem.current.currentSelectedGameObject;
+
+        print("current clicked topic vibe: " + button);
+        //Debug.Log(button);
+        //Debug.Log("tc" + scrollView.activeInHierarchy);
         string txt = GameObject.Find(button).GetComponentInChildren<Text>().text;
         topic.text = txt;
 
@@ -407,6 +434,7 @@ public class PlayerController : NetworkBehaviour
             {
                 message.text = data[1];
                 msgID = int.Parse(data[2]);
+                print("topic id: " + msgID);
             }
         }
         scrollView.SetActive(false);
@@ -762,7 +790,12 @@ public class PlayerController : NetworkBehaviour
         if (result.Contains("0"))
         {
             hideReport();
-            if (openCanvas == 3)
+            if (openCanvas == 1)
+            {
+                GetPosts();
+                Destroy(reportedVibe);
+            }
+            else if (openCanvas == 3) //personal topic replies
             {
                 //ClosePersonalTopicVibesRepliesPanel();
                 foreach (Transform msg in personalTopicVibesRepliesScrollview.transform.GetComponent<Transform>())

@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7092736444637949087}
+  - component: {fileID: 114557283995099210}
   - component: {fileID: 7092736444637949080}
   - component: {fileID: 7092736444637949081}
   - component: {fileID: 7092736444637949082}
   - component: {fileID: 7092736444637949086}
-  - component: {fileID: 114557283995099210}
   - component: {fileID: 8358825337279868994}
   m_Layer: 0
   m_Name: Player
@@ -36,6 +36,45 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114557283995099210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7092736444637949083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d685d589e2ad46689d840b235029243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wf: {fileID: 8358825337279868994}
+  clawmailField: {fileID: 0}
+  passwordField: {fileID: 0}
+  userType: {fileID: 0}
+  registerBtn: {fileID: 0}
+  clawmailFieldLogin: {fileID: 0}
+  passwordFieldLogin: {fileID: 0}
+  loginBtn: {fileID: 0}
+  refreshPublicTopicVibesBtn: {fileID: 0}
+  thoughtBubble: {fileID: 239042901209245716, guid: 65e33fec7b3cffa46b48822da201bf4f,
+    type: 3}
+  positions:
+  - {x: -327, y: 274, z: 0}
+  - {x: 21, y: 215, z: 0}
+  - {x: 341, y: 290, z: 0}
+  - {x: -365, y: -71, z: 0}
+  - {x: -19, y: -139, z: 0}
+  - {x: 339, y: -23, z: 0}
+  - {x: -352, y: -381, z: 0}
+  - {x: 3, y: -443, z: 0}
+  - {x: 339, y: -337, z: 0}
+  PersonalTopicBtn: {fileID: 8175800262917288043, guid: 2ddad822f94023f4caed4ef96bf745bf,
+    type: 3}
+  PersonalReplyMsg: {fileID: 8178248453037665958, guid: 34a5b7c85fb20c44da2244ef78920e93,
+    type: 3}
+  reportCanvas: {fileID: 0}
+  reportCategory: {fileID: 0}
 --- !u!33 &7092736444637949080
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -127,31 +166,6 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
---- !u!114 &114557283995099210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7092736444637949083}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d685d589e2ad46689d840b235029243, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  clawmailField: {fileID: 0}
-  passwordField: {fileID: 0}
-  userType: {fileID: 0}
-  registerBtn: {fileID: 0}
-  clawmailFieldLogin: {fileID: 0}
-  passwordFieldLogin: {fileID: 0}
-  loginBtn: {fileID: 0}
-  refreshPublicTopicVibesBtn: {fileID: 0}
-  wf: {fileID: 8358825337279868994}
-  PersonalTopicBtn: {fileID: 8175800262917288043, guid: 2ddad822f94023f4caed4ef96bf745bf,
-    type: 3}
-  PersonalReplyMsg: {fileID: 8178248453037665958, guid: 34a5b7c85fb20c44da2244ef78920e93,
-    type: 3}
 --- !u!114 &8358825337279868994
 MonoBehaviour:
   m_ObjectHideFlags: 0
