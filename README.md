@@ -6,7 +6,7 @@
 
 ## Repo Link: *https://github.com/soft-eng-practicum/good-vibes*
 
-## Platform Tool: Unity 2018.4.16f1 (Jan 27 release)
+## Platform Tool: *Unity 2018.4.16f1 (Jan 27, 2020 release)*
 
 ## Progress Tracking Tool: *https://zenhub.com*
 
@@ -19,3 +19,5 @@
 2. _**Jesse Merida**_
 	1. *UI/UX Design* :sushi:
 	2. *Data Modeler* :video_game:
+
+## User and Developer Documentation is on the root of our repo. Please take a look at them!
