@@ -19,5 +19,6 @@
 2. _**Jesse Merida**_
 	1. *UI/UX Design* :sushi:
 	2. *Data Modeler* :video_game:
+	3. *Co-Programming Lead* :sparkles:
 
 ## User and Developer Documentation is on the root of our repo. Please take a look at them!
